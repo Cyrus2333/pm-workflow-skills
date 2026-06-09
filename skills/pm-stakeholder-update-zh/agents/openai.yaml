@@ -1,0 +1,7 @@
+interface:
+  display_name: "同步说明"
+  short_description: "面向业务、运营与研发的对齐说明"
+  default_prompt: "使用 $pm-stakeholder-update-zh 帮我把这次需求结论整理成一版对外同步说明。"
+
+policy:
+  allow_implicit_invocation: true

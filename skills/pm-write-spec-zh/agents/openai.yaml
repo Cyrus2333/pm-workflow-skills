@@ -1,0 +1,7 @@
+interface:
+  display_name: "需求文档"
+  short_description: "输出中文 PRD、方案说明与评审材料"
+  default_prompt: "使用 $pm-write-spec-zh 把已经澄清的需求整理成正式的中文需求文档。"
+
+policy:
+  allow_implicit_invocation: true
