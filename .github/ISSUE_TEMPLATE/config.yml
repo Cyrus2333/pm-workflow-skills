@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Usage Discussion
+    url: https://github.com/Cyrus2333/pm-workflow-skills/discussions
+    about: 适合提使用方式、流程设计和 skill 方向讨论。

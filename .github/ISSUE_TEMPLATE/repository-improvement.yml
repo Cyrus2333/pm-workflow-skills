@@ -1,0 +1,30 @@
+name: Repository Improvement
+description: 提议改进仓库结构、规范、校验或协作流程
+title: "[Infra] "
+labels:
+  - infrastructure
+body:
+  - type: textarea
+    id: current_state
+    attributes:
+      label: 当前问题
+      description: 现在的仓库结构或流程哪里不顺手？
+      placeholder: 描述实际问题、出现场景和影响。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 改进建议
+      description: 你希望怎么改，目标是什么？
+      placeholder: 可包含目录调整、规范补充、CI 校验、模板优化等。
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: 风险与影响
+      description: 这个改动可能影响哪些已有 skills 或维护方式？
+      placeholder: 若无明显风险可写“暂无”。
+    validations:
+      required: true

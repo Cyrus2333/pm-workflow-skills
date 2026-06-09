@@ -1,0 +1,38 @@
+name: Skill Proposal
+description: 提议新增一个可复用的 PM workflow skill
+title: "[Skill] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 场景与问题
+      description: 这个 skill 主要解决什么场景，当前缺口是什么？
+      placeholder: 描述目标用户、典型场景、当前痛点。
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 预期范围
+      description: 这个 skill 应该负责什么，不应该负责什么？
+      placeholder: 写清楚边界，避免把项目事实写进全局 skill。
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: 建议工作流
+      description: 建议这个 skill 如何取上下文、如何输出、与其他 skills 如何衔接。
+      placeholder: 例如先读什么文档、输出哪些结构、何时转下游 skill。
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: 可复用参考材料
+      description: 是否需要共享模板、示例、检查清单或 agent 配置？
+      placeholder: 可填已有文件路径或待新增材料。
+    validations:
+      required: false

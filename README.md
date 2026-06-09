@@ -68,6 +68,7 @@ pm-workflow-skills/
 - `.editorconfig` / `.gitattributes`：统一换行和文本格式
 - `scripts/validate-skills.sh`：本地最小结构校验
 - `.github/workflows/validate.yml`：GitHub Actions 自动校验
+- `.github/CODEOWNERS` / PR 模板 / Issue 模板：统一协作入口
 
 ## 本地维护
 
