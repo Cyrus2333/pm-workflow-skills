@@ -58,3 +58,28 @@ pm-workflow-skills/
 
 - Upstream: `anthropics/knowledge-work-plugins/product-management`
 - 映射说明见 [upstream-mapping/anthropic-product-management-mapping.md](./upstream-mapping/anthropic-product-management-mapping.md)
+
+## 仓库基础设施
+
+当前仓库已补齐以下基础设施：
+
+- `CONTRIBUTING.md`：约束新增 skill、模板和 agent 配置的方式
+- `CHANGELOG.md`：记录结构性变更
+- `.editorconfig` / `.gitattributes`：统一换行和文本格式
+- `scripts/validate-skills.sh`：本地最小结构校验
+- `.github/workflows/validate.yml`：GitHub Actions 自动校验
+
+## 本地维护
+
+新增或修改 skill 后，建议本地先执行：
+
+```bash
+bash scripts/validate-skills.sh
+```
+
+新增 skill 时，至少保证：
+
+- `skills/<skill-name>/SKILL.md` 存在
+- `SKILL.md` front matter 中的 `name` 与目录名一致
+- 如果存在 `agents/`，则包含 `agents/openai.yaml`
+- 通用模板优先放到 `shared-references/`，避免重复拷贝
