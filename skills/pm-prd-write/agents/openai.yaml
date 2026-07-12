@@ -1,0 +1,7 @@
+interface:
+  display_name: "pm-prd-write"
+  short_description: "输出关联原型、支持研发实现与验收验证的完整中文 PRD"
+  default_prompt: "使用 $pm-prd-write 将已确认的产品方案和原型整理成可供研发实现的完整 PRD。"
+
+policy:
+  allow_implicit_invocation: true

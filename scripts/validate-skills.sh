@@ -21,6 +21,10 @@ while IFS= read -r skill_dir; do
   skill_name="$(basename "$skill_dir")"
   skill_file="$skill_dir/SKILL.md"
 
+  if [[ ! "$skill_name" =~ ^pm-[a-z0-9]+(-[a-z0-9]+)+$ ]]; then
+    fail "$skill_name must use lowercase pm-object-action kebab-case"
+  fi
+
   if [ ! -f "$skill_file" ]; then
     fail "missing $skill_file"
   fi
@@ -43,22 +47,35 @@ while IFS= read -r skill_dir; do
     fail "$skill_file missing description front matter"
   fi
 
-  if ! grep -Eq '^# ' "$skill_file"; then
-    fail "$skill_file missing top-level title"
+  if ! grep -Fqx "# $skill_name" "$skill_file"; then
+    fail "$skill_file top-level title must be '# $skill_name'"
   fi
 
-  if [ -d "$skill_dir/agents" ]; then
-    if [ ! -f "$skill_dir/agents/openai.yaml" ]; then
-      fail "$skill_dir/agents exists but openai.yaml is missing"
-    fi
+  agent_file="$skill_dir/agents/openai.yaml"
+  if [ ! -f "$agent_file" ]; then
+    fail "$agent_file is required"
+  fi
 
-    if ! grep -Eq '^interface:' "$skill_dir/agents/openai.yaml"; then
-      fail "$skill_dir/agents/openai.yaml missing interface section"
-    fi
+  if ! grep -Eq '^interface:' "$agent_file"; then
+    fail "$agent_file missing interface section"
+  fi
 
-    if ! grep -Eq '^policy:' "$skill_dir/agents/openai.yaml"; then
-      fail "$skill_dir/agents/openai.yaml missing policy section"
-    fi
+  if ! grep -Eq '^policy:' "$agent_file"; then
+    fail "$agent_file missing policy section"
+  fi
+
+  display_name="$(
+    sed -n 's/^[[:space:]]*display_name:[[:space:]]*//p' "$agent_file" \
+      | head -n 1 \
+      | sed "s/^['\"]//; s/['\"]$//"
+  )"
+
+  if [ "$display_name" != "$skill_name" ]; then
+    fail "$agent_file display_name '$display_name' does not match '$skill_name'"
+  fi
+
+  if ! grep -Fq "\$$skill_name" "$agent_file"; then
+    fail "$agent_file default_prompt must mention \$$skill_name"
   fi
 done < <(find skills -mindepth 1 -maxdepth 1 -type d | sort)
 
@@ -68,8 +85,9 @@ fi
 
 if [ -d "commands" ]; then
   while IFS= read -r command_file; do
-    if ! grep -Eq '^# ' "$command_file"; then
-      fail "$command_file missing top-level title"
+    command_name="$(basename "$command_file" .md)"
+    if ! grep -Fqx "# $command_name" "$command_file"; then
+      fail "$command_file top-level title must be '# $command_name'"
     fi
   done < <(find commands -mindepth 1 -maxdepth 1 -type f -name '*.md' | sort)
 fi

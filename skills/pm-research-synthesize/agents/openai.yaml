@@ -1,0 +1,7 @@
+interface:
+  display_name: "pm-research-synthesize"
+  short_description: "综合研究材料，提炼用户模式、证据强度、机会与产品建议"
+  default_prompt: "使用 $pm-research-synthesize 综合这些研究材料并提炼产品洞察。"
+
+policy:
+  allow_implicit_invocation: true

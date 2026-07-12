@@ -24,7 +24,7 @@
 ```text
 skills/<skill-name>/
 ├── SKILL.md
-├── agents/openai.yaml          # 可选
+├── agents/openai.yaml
 └── references/                 # 可选
 
 commands/
@@ -34,17 +34,22 @@ upstream-mapping/
 
 约定：
 
-- skill 目录名使用 kebab-case，并与 `SKILL.md` front matter 里的 `name` 保持一致
+- skill 名称使用 `pm-对象/交付物-动作` kebab-case，例如 `pm-prd-write`
+- 保留统一的 `pm-` 命名空间，对象放在动作前
+- 保持简短，不增加语言后缀
+- skill 目录名、front matter `name`、一级标题和 `agents/openai.yaml` 的 `display_name` 必须完全一致
 - 每个 skill 必须有 `SKILL.md`
-- `agents/openai.yaml` 用于展示名、简介和默认提示词；没有明确需要时可以不加
-- 可复用模板优先沉淀到 `shared-references/`，skill 私有参考材料才放各自 `references/`
+- 每个 skill 必须有 `agents/openai.yaml`，且 `default_prompt` 显式包含 `$skill-name`
+- 运行时模板放在拥有它的 skill `references/` 中，避免维护两份
+- `shared-references/` 只保存跨 skill 的设计框架，不复制运行时模板
 
 ## 编写要求
 
-- 优先写清楚“何时使用”“读取哪些上下文”“如何输出”
+- front matter `description` 必须写清用途、触发场景和不适用边界
+- body 必须写清工作边界、工作流程、默认输出和完成标准
 - 避免把策略问题伪装成实现细节
 - 默认使用中文，文件命名与正文风格保持一致
-- 新增模板时，优先判断是否能复用已有共享模板，避免重复副本失控
+- 新增模板时先确定唯一所有者，避免重复副本失控
 
 ## 提交流程
 
@@ -60,6 +65,8 @@ bash scripts/validate-skills.sh
 - 解决什么使用场景
 - 是否引入了新的共享模板或 agent 配置
 
+真实使用反馈的记录、归因和回归验证方式见 [使用反馈与迭代指南](./ITERATION_GUIDE.md)。
+
 ## 校验范围
 
 当前脚本会检查：
@@ -67,4 +74,5 @@ bash scripts/validate-skills.sh
 - `skills/` 下每个一级目录都存在 `SKILL.md`
 - `SKILL.md` 中的 `name` 与目录名一致
 - `SKILL.md` 含有 `description` front matter 和一级标题
-- 存在 `agents/` 时，必须包含 `openai.yaml`
+- 一级标题和 Codex `display_name` 与 skill 名称一致
+- `agents/openai.yaml` 存在，且默认提示显式引用对应 skill

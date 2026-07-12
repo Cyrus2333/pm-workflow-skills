@@ -1,0 +1,7 @@
+interface:
+  display_name: "pm-metrics-review"
+  short_description: "复盘产品指标表现、数据口径、异常原因与后续行动建议"
+  default_prompt: "使用 $pm-metrics-review 复盘这些产品指标并给出可执行的后续建议。"
+
+policy:
+  allow_implicit_invocation: true
