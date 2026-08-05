@@ -16,3 +16,6 @@ jobs:
 
       - name: Run repository validation
         run: bash scripts/validate-skills.sh
+
+      - name: Run documentation validation
+        run: python3 scripts/validate-docs.py

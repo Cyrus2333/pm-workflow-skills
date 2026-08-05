@@ -51,6 +51,16 @@ while IFS= read -r skill_dir; do
     fail "$skill_file top-level title must be '# $skill_name'"
   fi
 
+  if ! grep -Eq '^## 默认输出(结构)?$' "$skill_file"; then
+    fail "$skill_file missing required heading '## 默认输出' or '## 默认输出结构'"
+  fi
+
+  for required_heading in "## 优先读取" "## 完成标准"; do
+    if ! grep -Fqx "$required_heading" "$skill_file"; then
+      fail "$skill_file missing required heading '$required_heading'"
+    fi
+  done
+
   agent_file="$skill_dir/agents/openai.yaml"
   if [ ! -f "$agent_file" ]; then
     fail "$agent_file is required"
@@ -62,6 +72,14 @@ while IFS= read -r skill_dir; do
 
   if ! grep -Eq '^policy:' "$agent_file"; then
     fail "$agent_file missing policy section"
+  fi
+
+  if ! grep -Eq '^[[:space:]]*short_description:' "$agent_file"; then
+    fail "$agent_file missing interface short_description"
+  fi
+
+  if ! grep -Eq '^[[:space:]]*default_prompt:' "$agent_file"; then
+    fail "$agent_file missing interface default_prompt"
   fi
 
   display_name="$(

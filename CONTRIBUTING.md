@@ -59,6 +59,7 @@ upstream-mapping/
 
 ```bash
 bash scripts/validate-skills.sh
+python3 scripts/validate-docs.py
 ```
 
 建议在 PR 或提交说明中写清楚：
@@ -66,6 +67,7 @@ bash scripts/validate-skills.sh
 - 新增了什么 skill / 模板 / 规则
 - 解决什么使用场景
 - 是否引入了新的共享模板或 agent 配置
+- 是否同步更新了 `README.md`、`WORKFLOW_GUIDE.md`、相关交接说明和回归案例
 
 真实使用反馈的记录、归因和回归验证方式见 [使用反馈与迭代指南](./ITERATION_GUIDE.md)。
 

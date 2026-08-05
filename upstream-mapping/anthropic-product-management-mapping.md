@@ -1,5 +1,9 @@
 # Anthropic Product Management Mapping
 
+> 本文件记录上游能力与当前仓库的取舍，不是上游仓库的逐字翻译。
+>
+> 最近维护：2026-08-05 · 当前仓库基线：`c841325` · 完整运行关系见 [`WORKFLOW_GUIDE.md`](../WORKFLOW_GUIDE.md)
+
 ## Upstream 能力
 
 `anthropics/knowledge-work-plugins/product-management` 提供：
@@ -29,6 +33,14 @@
 | `sprint-planning` | 未保留 | 依赖团队容量、任务系统和交付承诺，更适合工具集成 skill |
 | `commands/brainstorm.md` | `commands/pm-requirement-define.md` | 与统一需求定义入口保持一致 |
 
+## 其他外部能力的吸收
+
+| 外部能力 / 参考 | 当前吸收位置 | 保留的精华 | 明确不直接照搬的部分 |
+|---|---|---|---|
+| `grill-me` / `grilling` 类交互质询 | `pm-requirement-define` 的深度质询协议 | 决策依赖、问题前沿、用户确认门、停止条件 | 不把通用质询当成证据，不新增竞争入口，不静默多轮追问 |
+| `product-management-skill` | `pm-prd-write`、`pm-requirement-define` | Edge case、风险暴露、受众派生输出 | 不把路线图、Swagger、技术 spec 和产品决策混入同一 skill |
+| `claude-skills` 的竞品分析流程 | `pm-competitor-analyze` 深度采集指南 | 分层采集、单品拆解、证据中间产物和可视化约束 | 不强制全量框架，不把 KANO / SWOT 等模型当成事实证据 |
+
 ## 结构性差异
 
 - 使用中文执行工作流，skill 采用 `pm-对象/交付物-动作` 命名
@@ -39,6 +51,7 @@
 - 分析型 skills 必须提供证据方法、模板和示例，而不是只有输出目录
 - 不保留脱离项目事实后只能生成泛化清单的管理型 skills
 - Codex `display_name` 与 skill 名称完全一致
+- 统一使用仓库级 `WORKFLOW_GUIDE.md` 解释选择、交接、协作方阅读顺序和维护方式
 
 ## 历史名称迁移
 
