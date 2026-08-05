@@ -6,6 +6,10 @@
 
 ### Changed
 
+- 扩展 `pm-competitor-analyze`，支持单品机制拆解、快速 / 深度路径选择，以及可回溯的 `raw/ → notes/ → merged.md` 深度采集方法。
+- 为竞品分析补充采集停止条件、框架适用约束和可视化证据规则，避免为填模板、评分或画图补造信息。
+- 为 `pm-requirement-define` 增加规模成本、第三方失败、降级后果、自动化 / AI 责任和 10 倍规模适用性扫描。
+- 为 `pm-prd-write` 增加跨章节一致性审查和管理者、产品 / 设计 / 测试、研发、运营派生视图规则，保持正式 PRD 为单一事实来源。
 - 统一全部 skill 为简短的 `pm-对象/交付物-动作` 名称，并使目录、front matter、一级标题和 Codex 展示名完全一致。
 - 合并产品想法探索和需求澄清为统一入口 `pm-requirement-define`。
 - 明确 `pm-requirement-define` 负责产品决策，`pm-prd-write` 负责研发交付规格；允许信息摘要重复，不允许重新执行方向决策。

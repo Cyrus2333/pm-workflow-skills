@@ -1,7 +1,7 @@
 interface:
   display_name: "pm-prd-write"
   short_description: "输出边界清晰、支持评审和研发交接的中文 PRD"
-  default_prompt: "使用 $pm-prd-write 将已确认的产品方案整理成 PRD，明确 PRD/spec 边界，并按需输出评审简版和研发 spec 交接清单。"
+  default_prompt: "使用 $pm-prd-write 将已确认的产品方案整理成 PRD，明确 PRD/spec 边界，完成跨章节一致性审查，并按需输出评审简版、受众视图和研发 spec 交接清单。"
 
 policy:
   allow_implicit_invocation: true

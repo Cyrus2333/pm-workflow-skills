@@ -1,7 +1,7 @@
 interface:
   display_name: "pm-competitor-analyze"
-  short_description: "围绕产品决策比较竞品做法、关键差异、前提与借鉴风险"
-  default_prompt: "使用 $pm-competitor-analyze 围绕这个产品问题完成竞品分析并给出建议。"
+  short_description: "围绕产品决策完成竞品对比或单品机制拆解并形成可追溯建议"
+  default_prompt: "使用 $pm-competitor-analyze 围绕这个产品问题选择合适深度，完成竞品对比或单品机制拆解并给出可追溯建议。"
 
 policy:
   allow_implicit_invocation: true
