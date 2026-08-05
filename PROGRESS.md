@@ -25,4 +25,6 @@
 - 深度质询触发回归：通过；12 个预置案例按 `no-grill / probe / deep-grill / route-evidence` 计数和规则完整性检查通过。
 - Markdown 表格检查：通过。
 - 最终差异审查：通过；变更仅涉及需求定义 skill、相关参考资源、协作入口和仓库说明。
-- 待完成：提交、推送和本地 Codex skills 同步。
+- Git 提交：`73ee042 Add optional product decision grilling mode`。
+- 远程推送：`origin/master` 已更新并与本地 `HEAD` 一致。
+- 本地同步：`/Users/huangjingye/.codex/skills` 下 6 个 skill 目录与仓库源目录递归比对一致。
