@@ -50,6 +50,8 @@ upstream-mapping/
 - 避免把策略问题伪装成实现细节
 - 默认使用中文，文件命名与正文风格保持一致
 - 新增模板时先确定唯一所有者，避免重复副本失控
+- 修改 `pm-requirement-define` 的深度质询触发规则时，必须同步检查[深度质询协议](./skills/pm-requirement-define/references/深度质询协议.md)、[触发回归案例](./skills/pm-requirement-define/references/深度质询触发案例.md)、README 和迭代指南，不能只改一条 prompt。
+- 深度质询相关改动必须同时验证“不应质询”“应先补证据”“应单问题试探”和“应深度质询”四类案例，避免只提高召回率而造成普遍误触发。
 
 ## 提交流程
 
