@@ -43,8 +43,23 @@
     <section class="section" id="prototype-review">
       <div class="section-head"><div><h2>原型评审</h2></div></div>
       <div class="prototype-review">
-        <aside class="state-rail"><h3>场景 / 页面状态</h3><button class="state-btn" data-state="UI-STATE-01"><span>活动已关闭 / 已结束</span><small>已结束 / 不可报名</small></button><button class="state-btn" data-state="UI-STATE-02"><span>圈内成员可优先报名</span><small>当前可优先报名</small></button><button class="state-btn" data-state="UI-STATE-03"><span>圈外用户等待公开</span><small>等待公开报名</small></button><button class="state-btn" data-state="UI-STATE-04"><span>身份暂无法确认</span><small>暂无法确认资格</small></button><button class="state-btn" data-state="UI-STATE-05"><span>已报名</span><small>已报名成功</small></button></aside>
-        <section class="prototype-pane"><div class="pane-head"><div><h3 id="stage-title">当前页面状态</h3><p class="muted" id="stage-subtitle"></p></div><span class="state-code" id="state-pill"></span></div><div class="device-wrap"><div class="device"><div class="device-screen" id="svg-host"></div></div></div></section>
+        <aside class="state-rail"><h3>场景 / 页面状态</h3><button class="state-btn active" data-state="UI-STATE-01"><span>活动已关闭 / 已结束</span><small>已结束 / 不可报名</small></button><button class="state-btn" data-state="UI-STATE-02"><span>圈内成员可优先报名</span><small>当前可优先报名</small></button><button class="state-btn" data-state="UI-STATE-03"><span>圈外用户等待公开</span><small>等待公开报名</small></button><button class="state-btn" data-state="UI-STATE-04"><span>身份暂无法确认</span><small>暂无法确认资格</small></button><button class="state-btn" data-state="UI-STATE-05"><span>已报名</span><small>已报名成功</small></button></aside>
+        <section class="prototype-pane"><div class="pane-head"><div><h3 id="stage-title">当前页面状态</h3><p class="muted" id="stage-subtitle"></p></div><span class="state-code" id="state-pill"></span></div><div class="device-wrap"><div class="device"><div class="device-screen" id="svg-host" data-initial-state="UI-STATE-01" data-rendered-state="UI-STATE-01" data-render-status="ready"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 700" role="img" aria-label="活动已结束" data-layout-contract="flat-v1" data-rendered-state="UI-STATE-01">
+      <rect width="390" height="700" fill="#f7f7f7"/>
+      <rect x="0" y="0" width="390" height="78" fill="#ffffff"/>
+      <text x="24" y="32" font-size="12" fill="#727272">9:41</text><text x="345" y="32" font-size="12" fill="#727272">● ● ▰</text>
+      <text x="24" y="62" font-size="22" font-weight="700" fill="#1e1e1e">活动详情</text>
+      <rect x="20" y="98" width="350" height="116" rx="18" fill="#efefef"/>
+      <text x="40" y="168" font-size="21" fill="#1e1e1e" font-weight="700">活动已结束</text>
+      <text x="40" y="194" font-size="12" fill="#727272">本场活动已结束，报名入口已关闭。</text>
+      <rect x="20" y="232" width="350" height="204" rx="18" fill="#ffffff" stroke="#c4c4c4"/>
+      <text x="40" y="304" font-size="18" fill="#1e1e1e" font-weight="700">本场活动已结束</text>
+      <rect x="40" y="382" width="310" height="1" fill="#dfdfdf"/>
+      <rect x="20" y="456" width="350" height="58" rx="16" fill="#202020"/>
+      <text x="195" y="492" text-anchor="middle" font-size="15" fill="#ffffff" font-weight="700">查看活动信息</text>
+
+      <rect x="20" y="610" width="350" height="1" fill="#dfdfdf"/>
+    </svg></div></div></div></section>
         <aside class="context-pane"><h3 id="inspect-title"></h3><div class="muted" id="inspect-subtitle"></div><div class="context-block"><h4>用户任务</h4><p id="inspect-task"></p></div><div class="context-block"><h4>用户看到</h4><ul id="inspect-visible"></ul></div><div class="context-block"><h4>主要动作</h4><p id="inspect-action"></p></div><div class="context-block"><h4>系统结果 / 下一状态</h4><p id="inspect-next"></p></div><div class="context-block"><h4>追溯关系</h4><div class="trace" id="inspect-trace"></div></div></aside>
       </div>
     </section>
@@ -330,8 +345,15 @@ const mobileNavToggle=document.getElementById('mobile-nav-toggle');
 mobileNavToggle.addEventListener('click',()=>body.classList.toggle('nav-open'));
 navToggle.addEventListener('click',()=>{body.classList.toggle('nav-collapsed');navToggle.textContent=body.classList.contains('nav-collapsed')?'›':'‹';});
 const render=(s)=>{
+  const host=document.getElementById('svg-host');
+  host.dataset.renderStatus='rendering';
   document.querySelectorAll('.state-btn').forEach(b=>b.classList.toggle('active',b.dataset.state===s.id));
-  document.getElementById('svg-host').innerHTML=s.svg;
+  host.innerHTML=s.svg;
+  const svg=host.querySelector(':scope > svg');
+  svg.dataset.layoutContract='flat-v1';
+  svg.dataset.renderedState=s.id;
+  host.dataset.renderedState=s.id;
+  host.dataset.renderStatus='ready';
   document.getElementById('state-pill').textContent=s.id;
   document.getElementById('stage-title').textContent=s.page;
   document.getElementById('stage-subtitle').textContent=s.state_label;

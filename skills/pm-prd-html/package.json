@@ -1,0 +1,17 @@
+{
+  "name": "pm-prd-html-layout-validator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "install-browser": "playwright install chromium",
+    "validate": "node scripts/validate-svg-layout.mjs",
+    "test": "node scripts/test-svg-layout-validator.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

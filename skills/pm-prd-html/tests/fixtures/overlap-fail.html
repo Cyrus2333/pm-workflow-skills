@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<title>SVG layout failing fixture</title>
+<button class="state-btn active" data-state="STORY-DEFAULT">默认态</button>
+<button class="state-btn" data-state="STORY-LONG">长内容错位态</button>
+<div id="svg-host" data-initial-state="STORY-DEFAULT" data-rendered-state="STORY-DEFAULT" data-render-status="ready">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 260" data-layout-contract="annotated-v1" data-rendered-state="STORY-DEFAULT">
+    <g data-layout-block="summary" data-layout-box="summary-card"><rect data-layout-boundary x="20" y="20" width="260" height="80" fill="#fff" stroke="#222"/><text x="32" y="52" font-size="16">摘要</text><text x="32" y="78" font-size="14">一行内容</text></g>
+    <g data-layout-block="action" data-layout-box="action-card"><rect data-layout-boundary x="20" y="116" width="260" height="80" fill="#fff" stroke="#222"/><text x="32" y="148" font-size="16">下一模块</text></g>
+  </svg>
+</div>
+<script>
+const states={
+  'STORY-DEFAULT':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 260" data-layout-contract="annotated-v1" data-rendered-state="STORY-DEFAULT">
+    <g data-layout-block="summary" data-layout-box="summary-card"><rect data-layout-boundary x="20" y="20" width="260" height="80" fill="#fff" stroke="#222"/><text x="32" y="52" font-size="16">摘要</text><text x="32" y="78" font-size="14">一行内容</text></g>
+    <g data-layout-block="action" data-layout-box="action-card"><rect data-layout-boundary x="20" y="116" width="260" height="80" fill="#fff" stroke="#222"/><text x="32" y="148" font-size="16">下一模块</text></g>
+  </svg>`,
+  'STORY-LONG':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 260" data-layout-contract="annotated-v1" data-rendered-state="STORY-LONG">
+    <g data-layout-block="summary" data-layout-box="summary-card"><rect data-layout-boundary x="20" y="20" width="260" height="120" fill="#fff" stroke="#222"/><text x="32" y="52" font-size="16">摘要</text><text x="32" y="78" font-size="14">第一行内容</text><text x="32" y="104" font-size="14">新增的第二行内容</text><text x="32" y="130" font-size="14">新增的第三行内容</text><g data-layout-control="misplaced-action"><rect data-layout-boundary x="24" y="108" width="120" height="40" fill="#ddd"/><text x="48" y="135" font-size="14">错误操作区</text></g></g>
+    <g data-layout-block="action" data-layout-box="action-card"><rect data-layout-boundary x="20" y="116" width="260" height="80" fill="#fff" stroke="#222"/><text x="32" y="148" font-size="16">仍使用写死坐标</text></g>
+  </svg>`
+};
+const controls=[...document.querySelectorAll('[data-state]')];
+function render(id){const host=document.getElementById('svg-host');host.dataset.renderStatus='rendering';controls.forEach((control)=>control.classList.toggle('active',control.dataset.state===id));host.innerHTML=states[id];host.dataset.renderedState=id;host.dataset.renderStatus='ready';}
+controls.forEach((control)=>control.addEventListener('click',()=>render(control.dataset.state)));
+render('STORY-DEFAULT');
+</script>
+</html>
