@@ -1,0 +1,7 @@
+interface:
+  display_name: "pm-collaboration-deliver"
+  short_description: "把正式 PRD 转成结构清晰、图文友好的人类协作产品文档"
+  default_prompt: "使用 $pm-collaboration-deliver 将这份正式 PRD 转译成一份人类友好的传统产品文档，承接已有截图或设计，按页面变化补必要原型与清晰交互，并在最终阅读视图中验证。"
+
+policy:
+  allow_implicit_invocation: true

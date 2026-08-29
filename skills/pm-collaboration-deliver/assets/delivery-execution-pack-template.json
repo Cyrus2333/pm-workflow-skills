@@ -1,0 +1,155 @@
+{
+  "mode": "interaction",
+  "validation_level": "enhanced",
+  "source": "/absolute/path/to/formal-prd.md",
+  "document": "/absolute/path/to/traditional-prd.md",
+  "primary_artifact": {
+    "type": "traditional_prd",
+    "surface": "feishu",
+    "reader_spine": ["background_problem", "goal", "scope", "solution", "detail", "acceptance"],
+    "technical_depth": "collaboration_only",
+    "secondary_artifacts": []
+  },
+  "audience": ["产品", "设计", "研发", "测试"],
+  "review_task": "读者需要理解或判断什么",
+  "mainline": "入口 → 关键动作 → 结果",
+  "interaction_model": "/absolute/path/to/interaction-model.json",
+  "prototype_plan": "/absolute/path/to/prototype-plan.json",
+  "review_questions": [
+    {
+      "id": "Q-01",
+      "question": "读者需要理解或判断什么",
+      "source_anchors": ["正式 PRD 稳定章节或 ID"],
+      "relation_kind": "sequence",
+      "representation": "flowchart",
+      "scope": "包含的主线与明确排除的细节",
+      "rationale": "为什么这种表达更清楚",
+      "validation": "如何验证语义正确且渲染可读",
+      "visual_id": "VIS-01"
+    },
+    {
+      "id": "Q-02",
+      "question": "全部页面状态、动作和迁移是否完整",
+      "source_anchors": ["正式 PRD 状态、规则和验收"],
+      "relation_kind": "state",
+      "representation": "wireframe",
+      "scope": "覆盖全部可见状态和操作迁移",
+      "rationale": "需要同时评审状态完整性与页面承载",
+      "validation": "状态可达、操作有去向且与交互模型一致",
+      "visual_id": "VIS-02"
+    },
+    {
+      "id": "Q-03",
+      "question": "关键用户任务在页面上如何完成",
+      "source_anchors": ["正式 PRD 页面和交互规则"],
+      "relation_kind": "spatial",
+      "representation": "wireframe",
+      "scope": "只展示该任务的关键信息、操作和反馈",
+      "rationale": "局部页面细节需要与对应规则就近评审",
+      "validation": "关键信息、动作、结果和异常均有来源",
+      "visual_id": "VIS-03"
+    }
+  ],
+  "reader_test": {
+    "reader_type": "author",
+    "reader_context": "未参与本轮需求讨论，只能看到成稿与成稿明确提供的链接",
+    "questions": [
+      {
+        "question_id": "Q-01",
+        "result": "pass",
+        "reader_answer": "读者依据成稿给出的简短答案",
+        "gap": "无；若失败则记录误解、缺失或隐含前提"
+      }
+    ],
+    "ambiguities": [],
+    "hidden_assumptions": [],
+    "contradictions": []
+  },
+  "render_check": {
+    "target": "最终交付平台或本地阅读视图",
+    "checked_at": "ISO-8601 时间",
+    "checks": {
+      "document_structure": "pass",
+      "visual_legibility": "pass",
+      "cross_references": "pass",
+      "asset_integrity": "pass",
+      "information_hierarchy": "pass",
+      "terminology_layering": "pass",
+      "inline_readability": "pass",
+      "zoom_readability": "pass"
+    },
+    "issues": []
+  },
+  "modules": [
+    {
+      "id": "MOD-01",
+      "title": "按用户任务命名的聚合模块",
+      "fact_ids": ["FACT-01"],
+      "visual_ids": ["VIS-03"]
+    }
+  ],
+  "facts": [
+    {
+      "id": "FACT-01",
+      "statement": "会改变用户结果的高风险事实",
+      "source_anchor": "正式 PRD 稳定章节或 ID",
+      "document_anchor": "传统 PRD 归宿",
+      "needs_visual": true,
+      "visual_ids": ["VIS-01"]
+    }
+  ],
+  "states": [],
+  "visuals": [
+    {
+      "id": "VIS-01",
+      "question": "读者如何一眼理解从触发到结果的主线",
+      "type": "flowchart",
+      "role": "overview",
+      "coverage": "focused",
+      "delivery_role": "inline",
+      "review_question_id": "Q-01",
+      "relation_kind": "sequence",
+      "scope": "只保留建立全局心智模型所需的逻辑",
+      "rationale": "正式 PRD 存在跨角色端到端任务链",
+      "validation": "主链、决策和结果均可回溯且渲染可读",
+      "source_anchors": ["正式 PRD 稳定章节或 ID"],
+      "path": "/absolute/path/to/visual.svg",
+      "placement": "3.1 总览流程"
+    },
+    {
+      "id": "VIS-02",
+      "question": "全部页面状态、动作和迁移是否完整",
+      "type": "wireframe",
+      "role": "deep_dive",
+      "coverage": "complete",
+      "delivery_role": "zoomable",
+      "review_question_id": "Q-02",
+      "relation_kind": "state",
+      "scope": "全部可见状态与操作迁移",
+      "rationale": "检查交互完整性而非重复说明主流程",
+      "validation": "交互模型覆盖检查和渲染预览",
+      "source_anchors": ["正式 PRD 稳定章节或 ID"],
+      "path": "/absolute/path/to/interaction-board.svg",
+      "spec_path": "/absolute/path/to/interaction-board-spec.json",
+      "placement": "3.2 完整交互"
+    },
+    {
+      "id": "VIS-03",
+      "question": "关键用户任务在页面上如何完成",
+      "type": "wireframe",
+      "role": "local",
+      "coverage": "focused",
+      "delivery_role": "inline",
+      "state_ids": ["STATE-01", "STATE-02"],
+      "transition_ids": ["TRANSITION-01"],
+      "review_question_id": "Q-03",
+      "relation_kind": "spatial",
+      "scope": "关键任务所需的信息、操作和反馈",
+      "rationale": "让页面规则与页面结构相邻评审",
+      "validation": "逐项对照正式 PRD 并查看渲染结果",
+      "source_anchors": ["正式 PRD 稳定章节或 ID"],
+      "path": "/absolute/path/to/local-prototype.svg",
+      "placement": "4.1 具体任务"
+    }
+  ]
+}

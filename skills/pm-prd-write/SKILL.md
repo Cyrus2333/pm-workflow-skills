@@ -280,7 +280,7 @@ P0 核心功能不得只写摘要段落或一句话需求。标准版 PRD 中，
 
 ```markdown
 #### UX 原型交付配置
-- prototypeTarget：ux-prototype / wireframe / 不需要
+- prototypeTarget：ux-prototype / wireframe / interactive-hifi / 不需要（interactive-hifi 表示可交互高保真原型，路由到 `pm-prototype-deliver`；与静态档位互斥，同一产物不得两边各做一遍）
 - prototypeFidelity：内容 / 布局 / 交互 / 组件 / 视觉，各项为必须 / 建议 / 不适用
 - prototypeReadiness：prototype-not-ready / prototype-ready-with-conditions / prototype-ready
 - pageSchema：页面壳层、信息区、组件目录、状态变体和稳定节点 ID
@@ -292,6 +292,8 @@ P0 核心功能不得只写摘要段落或一句话需求。标准版 PRD 中，
 ```
 
 就绪判定：页面入口和任务、P0 信息区、主要用户可见内容、关键状态 / 异常、移动端视口、代表性数据和静态交付约束都已确认，且没有阻塞页面理解或主操作的待确认项，才可标记 `prototype-ready`。
+
+**真实数据门槛**：涉及内容型页面时，`representativeData` 优先使用真实台账 / 真实供给数据而非编造样本；原型定稿与视觉打磨开始前，占位内容必须全部替换为真实数据。真实数据同时充当 AI 推断的事实约束——台账之外的业务规则不得脑补。真实数据确实不可得时允许降级为代表性样本，但必须标注降级原因与数据到位负责人。
 
 `prototype-ready-with-conditions` 可以进入 `pm-prd-html` 生成评审稿，但必须在 HTML 中显式展示待确认条件，不能作为 UI 设计基线；`prototype-not-ready` 不得让 HTML 通过通用占位或自由发挥补齐。
 

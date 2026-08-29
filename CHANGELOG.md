@@ -6,12 +6,19 @@
 
 ### Changed
 
+- `pm-collaboration-deliver` 结构瘦身（方案 A：纯迁移，不改运行时行为）：7 个回归测试移至仓库级 `tests/pm-collaboration-deliver/`，两份设计依据案例移至仓库级 `training-cases/`，仅被测试引用的 `black-white-wireframe-theme.json` 随测试迁出；skill 目录从 40 个文件减至 31 个，剩余全部为运行时文件。
 - 将页面体验交付从“单点 HTML 原型优化”收敛为全链路契约：需求定义记录体验交付意图与静态预览风险，需求分级分别记录风险等级和原型 / 静态交付轴，`pm-prd-write` 负责 `pageSchema`、`contentContract`、`viewportContract`、`designSystemRefs`、`staticDelivery` 和 `prototypeReadiness`，`pm-prd-html` 负责静态优先 UX 原型编译，`pm-quality-audit` 负责跨阶段放行判断。
 - 将 `pm-prd-html` 默认档位统一为 `ux-prototype`；`wireframe` 仅在显式选择时使用。页面状态的 SVG 必须直接存在于 HTML 初始 DOM，JavaScript 仅做渐进增强；禁止把 `innerHTML` / 运行时渲染作为受限预览下的唯一展示路径。
 - 同步更新 README、WORKFLOW_GUIDE、ITERATION_GUIDE、CONTRIBUTING、PROGRESS、命令入口、分级路由 / 模板、项目画像、`agents/openai.yaml` 和示例，新增静态 HTML 原型检查脚本并接入 CI，避免上下游和项目引导文件继续保留旧口径。
 
 ### Added
 
+- 新增 `pm-prototype-deliver`（可交互原型交付面）：将已确认方案或正式 PRD 生产为高保真可交互原型并发布，含开工三检查（参照物清单 / UI 设计专项技能 / 真实数据可得性）、真实数据门槛（未换真实数据不进入视觉打磨）、五通道打磨协作与文档对齐回写；支持“方案 → 原型 → PRD 对齐”与“PRD → 原型”两种顺序；零脚本，与 `pm-prd-html` 静态阅读原型按 `prototypeTarget` 互斥。方法论标注单案例验证待校准，并写明降级合并退出机制。
+- 新增共享参考《诉求传达与协作反馈指南》：人 → AI 诉求传达的五通道（概念锚点 / 参照物 / 元素级指令 / 设计判断 / 元规则）、参照物清单模板、文案负面清单四条红线、调性诉求传递法与低保真试错技巧；效率数据标注源自首个案例待校准。
+- 新增训练案例《案例：探索页体验原型协作全过程》，作为上述能力的设计依据与回归验证样本。
+- 接入点（均为引用级小改）：`pm-requirement-define` 增加参照物清单收集与概念锚点 / 低保真试错指引；`pm-prd-write` 的 `prototypeTarget` 增加 `interactive-hifi` 档位并强化真实数据门槛；`pm-collaboration-deliver` 将负面清单并入正文污染条款、接受高保真原型链接作为视觉证据；README 与 WORKFLOW_GUIDE 更新职责地图与路由。
+- `pm-collaboration-deliver` 蒸馏开源原型能力（multi-screen-wireframe、prd2prototype、visual-plan 等）：资产稳定定位协议与批注覆盖层模板（`annotations-overlay-template.js`）、原型版本与变更信号（v0.1/v0.2/v0.3.x 升号判据、三色徽标、倒序版本记录、隐藏而非删除）、复杂联动三件套、反馈定位三元组与四分类处置流、持久视觉上下文（design-context.md）与可选对抗性自审；`build_screen_html.py` 输出稳定 id 待后续补齐。
+- 合并上游 `Cyrus2333:master`，引入 `pm-prd-html` 及配套的 `pm-prd-write` 体验中间层契约（原型范围与页面状态规划、复杂体验中间层示例）。
 - 新增《需求迭代闭环与收尾协议》，把既有规则 / 角色 / 指标 / 结算改造中的规则变更台账、影响地图、时序与归属、幂等 / 失败恢复、历史边界和交付闭环沉淀为可按风险裁剪的共享协议。
 
 - 新增 `pm-quality-audit` 跨阶段质量审计 skill，将“生成完成”和“质量通过”分开，统一检查上下文充分性、逻辑有效性、覆盖完整性、可追溯性、可执行性和不确定性校准。
