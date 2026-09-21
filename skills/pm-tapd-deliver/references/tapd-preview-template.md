@@ -27,17 +27,19 @@
 ## 状态计划
 - 创建状态：…
 - 目标状态：…
-- 是否可推进：是 / 否 / V1 无法在写入前证明 transition
+- 是否可推进：是 / 否
+- 证明来源：official_workflow / documented_task_status
+- 是否可宣称 workflow-proven：是 / 否
 - 阻塞字段：…
 - 预计本次最终状态：…
 
-## 适配器与能力
+## 附件与能力
 - 后端：tapd-openapi / `scripts/pm_tapd.py`
-- workflow：UNAVAILABLE
-- Task attachment list：UNAVAILABLE
-- Task attachment upload：UNAVAILABLE
-- mention：UNAVAILABLE
-- 将上传：无（V1 不上传）
+- Task attachment list：未调用 / 查询成功 / 失败
+- Task attachment upload：community contract / UNAVAILABLE
+- Task attachment Readback：未调用 / 将在上传后执行
+- 将上传：无 / 文件列表
+- mention：无 / 预览中的 nick 与原生节点
 
 ## dry-run form
 - 与下方将 POST 的字段一致，未确认前不得去掉 `--dry-run`

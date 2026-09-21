@@ -55,14 +55,19 @@ class TapdContractTests(unittest.TestCase):
 
 
 class AdapterTests(unittest.TestCase):
-    def test_capabilities_do_not_claim_attachment_or_mention(self):
+    def test_capabilities_include_workflow_attachment_and_mention(self):
         payload = json.loads(self._run(["capabilities"]))
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["backend"], "tapd-openapi")
+        self.assertEqual(payload["version"], 2)
         self.assertTrue(payload["capabilities"]["story"])
-        self.assertFalse(payload["capabilities"]["attachment"])
-        self.assertFalse(payload["capabilities"]["mention"])
-        self.assertFalse(payload["capabilities"]["workflow"])
+        self.assertTrue(payload["capabilities"]["workflow"])
+        self.assertTrue(payload["capabilities"]["mention"])
+        self.assertTrue(payload["capabilities"]["attachment"])
+        self.assertTrue(payload["capabilities"]["attachment_list"])
+        self.assertTrue(payload["capabilities"]["attachment_upload"])
+        self.assertEqual(payload["contracts"]["attachment_upload"], "community")
+        self.assertEqual(payload["unavailable"], [])
 
     def test_redact_strips_password_fields(self):
         cleaned = adapter.redact(
@@ -212,6 +217,248 @@ class AdapterTests(unittest.TestCase):
             code = adapter.main(argv, request=request)
         self.assertIn(code, allowed_codes)
         return buf.getvalue()
+
+
+    def test_mention_html_escapes_and_rejects_injection(self):
+        html = adapter.build_comment_description('<b class="at-who">x</b>', ['alice" onclick=x'])
+        self.assertIn('data-userid="alice&quot; onclick=x"', html)
+        self.assertIn("&lt;b class=", html)
+        self.assertEqual(adapter.extract_mention_nodes(html)[0]["nick"], 'alice" onclick=x')
+        verified = adapter.mention_verification(["alice"], "@alice 请看")
+        self.assertEqual(verified["status"], "MENTION_UNVERIFIED")
+
+    def test_members_reject_duplicate_display_name(self):
+        def request(method, path, params, form, files=None):
+            self.assertEqual(path, "/workspaces/users")
+            return {
+                "http_status": 200,
+                "data": [
+                    {"UserWorkspace": {"user": "a1", "name": "Alice", "status": "1"}},
+                    {"UserWorkspace": {"user": "a2", "name": "Alice", "status": "1"}},
+                ],
+            }
+
+        payload = json.loads(self._run(
+            ["members", "--workspace-id", "42", "--nicks", "Alice"],
+            request=request,
+            allowed_codes=(1,),
+        ))
+        self.assertFalse(payload["ok"])
+        self.assertEqual(payload["code"], "MEMBER_AMBIGUOUS")
+
+    def test_workflow_story_rejects_illegal_transition(self):
+        def request(method, path, params, form, files=None):
+            if path == "/workflows/status_map":
+                return {"http_status": 200, "data": {"planning": "规划中", "status_2": "实现中"}}
+            if path == "/workflows/all_transitions":
+                return {
+                    "http_status": 200,
+                    "data": [{"WorkflowTransition": {"from": "planning", "to": "status_2"}}],
+                }
+            raise AssertionError(path)
+
+        payload = json.loads(self._run(
+            [
+                "workflow",
+                "--entity",
+                "stories",
+                "--workspace-id",
+                "42",
+                "--workitem-type-id",
+                "9",
+                "--from",
+                "实现中",
+                "--to",
+                "规划中",
+            ],
+            request=request,
+        ))
+        self.assertTrue(payload["ok"])
+        self.assertFalse(payload["legal"])
+        self.assertTrue(payload["workflow_proven"])
+        self.assertEqual(payload["source"], "official_workflow")
+        self.assertEqual(payload["from_key"], "status_2")
+        self.assertEqual(payload["to_key"], "planning")
+
+    def test_workflow_task_falls_back_when_official_api_rejects(self):
+        def request(method, path, params, form, files=None):
+            raise adapter.AdapterError("system invalid", 1, extra={"info": "system invalid"})
+
+        payload = json.loads(self._run(
+            [
+                "workflow",
+                "--entity",
+                "tasks",
+                "--workspace-id",
+                "42",
+                "--from",
+                "open",
+                "--to",
+                "progressing",
+            ],
+            request=request,
+        ))
+        self.assertTrue(payload["legal"])
+        self.assertFalse(payload["workflow_proven"])
+        self.assertEqual(payload["source"], "documented_task_status")
+
+    def test_comment_preview_and_dry_run_do_not_post(self):
+        calls = []
+
+        def request(method, path, params, form, files=None):
+            calls.append((method, path, form, files))
+            if path == "/workspaces/users":
+                return {
+                    "http_status": 200,
+                    "data": [{"UserWorkspace": {"user": "alice", "name": "Alice", "status": "1"}}],
+                }
+            raise AssertionError(path)
+
+        payload = json.loads(self._run(
+            [
+                "comment",
+                "add",
+                "--dry-run",
+                "--entity",
+                "tasks",
+                "--workspace-id",
+                "42",
+                "--id",
+                "7",
+                "--author",
+                "pm",
+                "--text",
+                "请看",
+                "--mentions",
+                "alice",
+            ],
+            request=request,
+        ))
+        self.assertTrue(payload["dry_run"])
+        self.assertIn('data-userid="alice"', payload["description"])
+        self.assertEqual(calls, [("GET", "/workspaces/users", None, None)])
+
+    def test_comment_add_requires_native_node_readback(self):
+        def request(method, path, params, form, files=None):
+            if path == "/workspaces/users":
+                return {
+                    "http_status": 200,
+                    "data": [{"UserWorkspace": {"user": "alice", "name": "Alice", "status": "1"}}],
+                }
+            if method == "POST" and path == "/comments":
+                return {"http_status": 200, "data": {"Comment": {"id": "c1"}}}
+            if path == "/comments":
+                return {
+                    "http_status": 200,
+                    "data": [{"Comment": {
+                        "id": "c1",
+                        "workspace_id": "42",
+                        "entry_type": "tasks",
+                        "entry_id": "7",
+                        "author": "pm",
+                        "description": "@alice 请看",
+                    }}],
+                }
+            raise AssertionError(path)
+
+        payload = json.loads(self._run(
+            [
+                "comment",
+                "add",
+                "--entity",
+                "tasks",
+                "--workspace-id",
+                "42",
+                "--id",
+                "7",
+                "--author",
+                "pm",
+                "--text",
+                "请看",
+                "--mentions",
+                "alice",
+            ],
+            request=request,
+            allowed_codes=(1,),
+        ))
+        self.assertFalse(payload["ok"])
+        self.assertEqual(payload["verification"]["status"], "MENTION_UNVERIFIED")
+
+    def test_attachment_upload_dry_run_validates_local_file_and_does_not_post(self):
+        calls = []
+
+        def request(method, path, params, form, files=None):
+            calls.append((method, path, files))
+            if path == "/attachments":
+                return {"http_status": 200, "data": []}
+            raise AssertionError(path)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            artifact = root / "release.md"
+            artifact.write_text("release", encoding="utf-8")
+            payload = json.loads(self._run(
+                [
+                    "attachments",
+                    "upload",
+                    "--dry-run",
+                    "--entity",
+                    "tasks",
+                    "--workspace-id",
+                    "42",
+                    "--id",
+                    "7",
+                    "--file",
+                    str(artifact),
+                    "--root",
+                    str(root),
+                ],
+                request=request,
+            ))
+        self.assertTrue(payload["dry_run"])
+        self.assertEqual(payload["filename"], "release.md")
+        self.assertEqual(payload["would_post"], "/files/upload_attachment")
+        self.assertEqual(payload["type"], "task")
+        self.assertEqual(calls, [("GET", "/attachments", None)])
+
+    def test_attachment_same_name_stops_without_upload(self):
+        def request(method, path, params, form, files=None):
+            if path == "/attachments":
+                return {
+                    "http_status": 200,
+                    "data": [{"Attachment": {
+                        "id": "a1",
+                        "workspace_id": "42",
+                        "type": "task",
+                        "entry_id": "7",
+                        "filename": "release.md",
+                    }}],
+                }
+            raise AssertionError("must not upload")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            artifact = root / "release.md"
+            artifact.write_text("release", encoding="utf-8")
+            payload = json.loads(self._run(
+                [
+                    "attachments",
+                    "upload",
+                    "--entity",
+                    "tasks",
+                    "--workspace-id",
+                    "42",
+                    "--id",
+                    "7",
+                    "--file",
+                    str(artifact),
+                    "--root",
+                    str(root),
+                ],
+                request=request,
+                allowed_codes=(1,),
+            ))
+        self.assertEqual(payload["code"], "ATTACHMENT_DUPLICATE")
 
 
 class DeliverableValidationTests(unittest.TestCase):

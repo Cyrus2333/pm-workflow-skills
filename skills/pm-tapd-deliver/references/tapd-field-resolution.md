@@ -17,7 +17,7 @@
 
 ## 2. 实时解析
 
-写入前通过 `scripts/pm_tapd.py fields/workspace/get` 读取 workspace、Story fields、Task fields、entity custom fields、workitem type 和枚举。V1 没有 workflow status map / transitions 查询；不能在写入前宣称 transition 已被证明合法。reference 只保存“逻辑字段 → 实时识别方式 → 写入参数 → Readback 断言”，不固定 `custom_field_N` 或单 workspace ID。
+写入前通过 `scripts/pm_tapd.py fields/workspace/get/workflow` 读取 workspace、Story fields、Task fields、entity custom fields、workitem type、枚举和状态流转。reference 只保存“逻辑字段 → 实时识别方式 → 写入参数 → Readback 断言”，不固定 `custom_field_N` 或单 workspace ID。
 
 逻辑字段解析失败时，不写该字段；若它是目标状态或用户指令的必要事实，则暂停并说明原因。
 
@@ -25,10 +25,14 @@ Workspace 的优先级为：用户本轮指定 > 当前明确 TAPD Story / Task 
 
 ## 3. Story 目标状态
 
-没有公共默认目标状态。仅对明确要求的目标状态计划流转。V1 不能通过独立 workflow API 预证 transition，只能在预览中标明“目标状态 / 无法预证 / 以服务端接受并 Readback 为准”，并检查该 workspace / workitem type 所需事实。需求提出人、所属部门等无可靠来源时必须询问，不得猜测。
+没有公共默认目标状态。仅对明确要求的目标状态计划流转。每次通过 `workflow --entity stories --workitem-type-id ...` 读取官方 status map 与合法 transition，并检查该 workspace / workitem type 所需事实。当前到目标不在 transition 中则禁止写入。需求提出人、所属部门等无可靠来源时必须询问，不得猜测。
 
-## 4. Product Task 类别
+## 4. Product Task 状态
 
-根据实际工作和实时类别枚举提出候选，不硬编码组织专用类别。事实源、schema API和写参数是不同证据：同名label可能对应多个API字段，必须按实际写工具schema唯一映射。两个工具返回冲突时核对实体类型、缓存/权限与权威字段读取；不能用空数组覆盖非空实时schema，也不能盲目合并。
+官方 workflow 的 `system` 只覆盖 story / bug。先尝试 `workflow --entity tasks`；若 TAPD 拒绝，适配器回退到文档化 `open / progressing / done`，并设置 `source=documented_task_status`、`workflow_proven=false`。Skill 可以把文档化允许的流转写入预览，但不得对用户宣称“已通过 workflow API 证明合法”；最终仍以服务端接受写入并 Readback 为准。
+
+## 5. Product Task 类别
+
+根据实际工作和实时类别枚举提出候选，不硬编码组织专用类别。事实源、schema API和写参数是不同证据：同名label可能对应多个API字段，必须按实际写API字段唯一映射。两个工具返回冲突时核对实体类型、缓存/权限与权威字段读取；不能用空数组覆盖非空实时schema，也不能盲目合并。
 
 结构化字段解析可复用scripts/tapd-contract.py：同名label不唯一即拒绝，明确当前写API字段后再解析枚举。该纯函数不抓取schema、不判定业务推荐正确，也不执行写入。

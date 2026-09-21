@@ -45,7 +45,7 @@ flowchart LR
 | 协作视觉交付 | `pm-prd-html` | 已确认且 `prototypeReadiness` 达到要求的 PRD，需要给产品、设计、研发、测试提供更易读的协作评审物 | 不重新做产品决策，不生成多个文档，不使用 PNG，不维护第二套规则；只编译 PRD 已确认的体验中间层，默认输出 `ux-prototype`，并检查内容覆盖、静态可降级性和真实阅读效果 | 单文件 `prd.html`，按阅读任务重组内容，保留可按需回看的完整规格，带固定可收起侧栏、真实视窗内可滚动的 SVG UX 原型 / 流程图、需求上下文、覆盖台账、一致性检查和静态 HTML 验收证据 |
 | 变化同步 | `pm-update-write` | 已确认结论、范围、上线内容或计划变化需要同步 | 不补做需求定义，不替代 PRD，不解释未验证因果 | 更新说明、变更通知、更新日志、行动项 |
 | 质量审计 | `pm-quality-audit` | 已有产品产物，需要判断是否完整、严谨、可交接 | 不替代原 skill 写正文，不补造事实，不用平均分掩盖硬缺陷 | 质量审计报告、缺陷清单、追溯矩阵、放行结论 |
-| 安全同步 TAPD | `pm-tapd-deliver` | 用户需要创建 / 更新 TAPD Story 或当前 PM 的 Task | 不重做定义、分级、PRD 或审计；不自动写入、不创建其他角色 Task；V1 不上传附件、不伪造 mention | 完整写入预览；经明确确认后的顺序写入、Readback、Necessity Check 与停止报告 |
+| 安全同步 TAPD | `pm-tapd-deliver` | 用户需要创建 / 更新 TAPD Story 或当前 PM 的 Task | 不重做定义、分级、PRD 或审计；不自动写入、不创建其他角色 Task；不伪造 mention，不用 Description 文件名冒充附件 | 完整写入预览；经明确确认后的顺序写入、Readback、Necessity Check 与停止报告 |
 
 ## 2.0 产物修订记录与版本追溯
 

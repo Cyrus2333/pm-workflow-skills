@@ -1,4 +1,4 @@
-# TAPD Deliver V1 测试用例
+# TAPD Deliver 测试用例
 
 在专用 sandbox workspace 或 mock 中验证，禁止用生产对象试错。所有真实 TAPD 写操作须另行授权。
 
@@ -44,7 +44,7 @@ N6 必须区分两个历史时点：初次写入与回读不一致的失败时�
 
 ## 附件与 Description
 
-1. capability 不可用时，无附件交付要求的 Task 仍可 done；有必须附件的 Task 停止 done。单附件、多附件、同名附件、上传中途失败、附件 Readback 不一致。
+1. upload unavailable 时，无附件交付要求的 Task 仍可 done；有必须附件的 Task 停止 done。单附件、多附件、同名附件、上传中途失败、附件 Readback 不一致。
 2. Description 有人工内容、有受管片段、预览后字段配置变化。
 3. 本地文件不存在、空文件、目录误传、root 外文件、symlink 越界、仅有文件名无可靠路径。
 4. 只有交付计划、无真实文件时，Description 使用“计划产出物”。
@@ -52,9 +52,24 @@ N6 必须区分两个历史时点：初次写入与回读不一致的失败时�
 6. 上传并通过 Attachment Readback 后，才标记“已上传产出物”。
 7. Description 写有文件名但本地无文件时，不得视为附件存在。
 8. 用户要求上传交付物时，真实文件存在且附件能力可用则必须走上传与回读；不得只更新 Description 替代附件上传。
-9. V1 `capabilities.attachment` 为 false 时，直接报告 UNAVAILABLE；不得因 MCP 配置、CLI 安装或 Description 文件名改判可用。
-10. 用户要求上传或 done 依赖附件时，停止依赖附件的动作，并让用户选择只做 Story/Task 或全部停止。
-11. 无必须附件的 Task，V1 仍可在确认完成、日期和投入人天后 done；不得声称已上传。
+9. list、upload、Readback 分别检测；upload 走 community 合同，TAPD 404/拒绝时报 `ATTACHMENT_UPLOAD_UNAVAILABLE`，不得把已验证 list 误报为整体不可用，也不得改判 MCP/CLI 可用。
+10. 同名附件默认停止，不覆盖、不重试另一种 type。
+11. 无必须附件的 Task，仍可在确认完成、日期和投入人天后 done；不得声称已上传。
+
+## 状态流转
+
+1. Story：官方 transition 包含当前到目标时可推进；不包含则停止，即使字段 schema 里看得到该状态名。
+2. Story 缺少 workitem_type_id 时不得猜测 workflow。
+3. Task：官方 `system=task` 成功则按官方结果；拒绝则使用文档化 open/progressing/done，预览标明非 workflow-proven。
+4. 未跑 `workflow` 前不得写入状态变更。
+
+## 真实 mention
+
+1. 显示名重复、成员不存在或停用时阻止写入。
+2. preview / dry-run 不得 POST `/comments`。
+3. 回读只有普通 `@nick` 文本时为 `MENTION_UNVERIFIED`，不得当作成功。
+4. 正文注入的 HTML 不得变成额外 mention 节点。
+5. 作者必须用户确认；不得用 Task owner 或 `api_user` 推断。
 
 ## 安全与确认
 
@@ -62,4 +77,4 @@ N6 必须区分两个历史时点：初次写入与回读不一致的失败时�
 2. 中途 Readback 失败后剩余动作不执行；不自动删除、覆盖或重试写入。
 
 ## 自动 contract 覆盖
-仓库测试应检查字段解析、枚举解析、完整与不完整查重、配置不等于查询、显式文件校验和 root 越界阻止。脚本只核验确定性输入，不能证明平台真实成功或模型必然遵守协议。
+仓库测试应检查字段解析、枚举解析、完整与不完整查重、配置不等于查询、显式文件校验、root 越界阻止、mention HTML 转义、重复成员拒绝、Story 非法流转拒绝、Task workflow 回退、附件 dry-run 不 POST。脚本只核验确定性输入，不能证明平台真实成功或模型必然遵守协议。

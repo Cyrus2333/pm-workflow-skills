@@ -12,7 +12,7 @@
 
 先以标准化标题在同一 workspace 的 `stories` 查重。完全一致为明确重复，停止并返回已有 Story；主题可能相关时仅列候选，由用户选择复用或新建。
 
-不默认推进planned。用户要求流转时，预览前读取目标workitem type的status map/合法transition及必需事实；创建后Readback并复核实际初始状态。满足才单独推进并再次 Readback；否则停在合法初始状态并报告缺口。预览必须分别写明创建状态、目标状态、可否推进和预计最终状态。
+不默认推进planned。用户要求流转时，预览前必须运行 `workflow --entity stories --workitem-type-id ... --from ... --to ...`，用官方 status map / 合法 transition 证明当前到目标可走，并检查必需事实。创建后Readback并复核实际初始状态。满足才单独推进并再次 Readback；否则停在合法初始状态并报告缺口。官方 transition 不包含该路径时禁止写入。预览必须分别写明创建状态、目标状态、可否推进、证明来源和预计最终状态。
 
 Story Readback 至少断言 workspace、story_id、name、workitem type、status、priority、label、Description 和本轮写入的 custom fields。
 
@@ -75,9 +75,9 @@ Task 查重以“同一项具体工作／同一轮交付”为准，不能仅因
 
 Task 标题自然语言表达，不加“【产品】”前缀。Product Task 类别必须实时解析 logical field 与合法枚举：高置信推荐在预览中注明；低置信要求用户选择；字段不存在时不写。
 
-用户明确要求“创建后进行中”时，严格执行 create(open) → Readback → open 到 progressing → Readback。不得根据上下文自动改为 progressing。V1 没有独立 Task workflow 查询能力，Task 字段 schema 只能说明 `progressing` 是支持的目标状态，不能在写入前宣称 transition 已被 workflow 证明合法；最终以服务端接受写入并 Readback 为准。
+用户明确要求“创建后进行中”时，严格执行 create(open) → Readback → open 到 progressing → Readback。不得根据上下文自动改为 progressing。写入 progressing / done 前先跑 `workflow --entity tasks`。若官方 API 接受 `system=task`，按官方 transition 证明；若 TAPD 拒绝，只能使用文档化 `open / progressing / done` 图，预览必须标明 `source=documented_task_status`，不能宣称 transition 已被 workflow 证明合法。最终以服务端接受写入并 Readback 为准。
 
-用户明确完成时，先确认工作已完成、实际完成日期和实际投入人天。先根据当前 Task 与已确认交付计划判断是否存在必须上传的附件：存在时，附件必须已上传且 Readback；不存在时，附件不是 done 前置条件，attachment capability unavailable 也不得阻止 done。日期未给时可推荐当天并写入预览；投入人天不得推测。若没有可靠的合法写入字段，阻止 done；V1 不自动转写 timesheet。
+用户明确完成时，先确认工作已完成、实际完成日期和实际投入人天。先根据当前 Task 与已确认交付计划判断是否存在必须上传的附件：存在时，附件必须已上传且 Readback；不存在时，附件不是 done 前置条件，upload unavailable 也不得阻止 done。日期未给时可推荐当天并写入预览；投入人天不得推测。若没有可靠的合法写入字段，阻止 done；不自动转写 timesheet。
 
 Task Readback 至少断言 task_id、story_id、name、owner、begin、due、status、label、Product Task 类别、Description 和本轮其他重要字段。
 

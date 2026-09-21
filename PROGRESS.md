@@ -52,6 +52,6 @@
 
 - 结论：#5 先以独立 TAPD 写入适配器合入；随后收回到统一 `pm-*` 命名空间 `pm-tapd-deliver`，并作为可选出口接入主工作流，而不是产品决策 / PRD 必经阶段。
 - 已同步 README、WORKFLOW_GUIDE、需求定义 / 分级 / PRD 下游提示、CHANGELOG 和 CI unittest。
-- 传输层改为仓库内官方 OpenAPI 窄适配器 `scripts/pm_tapd.py`：模型不直接 curl，不绑定 MCP 或第三方 CLI。V1 覆盖 Story/Task 预检、查重、dry-run、写入和 Readback；附件、真实 mention、完整 workflow 查询保持 UNAVAILABLE。
+- 传输层改为仓库内官方 OpenAPI 窄适配器 `scripts/pm_tapd.py`：模型不直接 curl，不绑定 MCP 或第三方 CLI。覆盖 Story/Task 预检、查重、dry-run、写入、Readback、Story workflow 证明、真实 mention 和标准附件；Task workflow 在官方拒绝时诚实回退，附件 upload 按社区合同实现，失败不伪造。
 - 保留安全协议：实时字段解析、查重、预览确认、顺序写入、Readback、Necessity Check；不引入组织专用默认值。
 - #4 已关闭，避免并行维护两套 TAPD skill。
