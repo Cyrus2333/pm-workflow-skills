@@ -34,10 +34,10 @@ upstream-mapping/
 
 约定：
 
-- skill 名称使用 `pm-对象/交付物-动作` kebab-case，例如 `pm-prd-write`
-- 保留统一的 `pm-` 命名空间，对象放在动作前
+- 既有工作流 skill 使用 `pm-对象/交付物-动作` kebab-case，例如 `pm-prd-write`；可独立安装的 Product Engine 能力使用 `product-engine-能力`，例如 `product-engine-tapd`
+- 同一能力只保留一个活动命名空间，不同时维护 `pm-*` 与 `product-engine-*` 两份实现
 - 保持简短，不增加语言后缀
-- skill 目录名、front matter `name`、一级标题和 `agents/openai.yaml` 的 `display_name` 必须完全一致
+- skill 目录名、front matter `name` 和一级标题必须完全一致；`product-engine-*` 的 `display_name` 可使用 `AI Product Engine · 能力名称` 品牌格式
 - 每个 skill 必须有 `SKILL.md`
 - 每个 skill 必须有 `agents/openai.yaml`，且 `default_prompt` 显式包含 `$skill-name`
 - 运行时模板放在拥有它的 skill `references/` 中，避免维护两份
@@ -83,5 +83,5 @@ python3 scripts/validate-html-prototypes.py
 - `skills/` 下每个一级目录都存在 `SKILL.md`
 - `SKILL.md` 中的 `name` 与目录名一致
 - `SKILL.md` 含有 `description` front matter 和一级标题
-- 一级标题和 Codex `display_name` 与 skill 名称一致
+- 一级标题与 skill 名称一致；Codex `display_name` 符合对应命名空间规则
 - `agents/openai.yaml` 存在，且默认提示显式引用对应 skill

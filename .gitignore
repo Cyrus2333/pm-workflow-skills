@@ -5,3 +5,5 @@
 *.swo
 .obsidian/
 介绍材料/
+__pycache__/
+*.py[cod]

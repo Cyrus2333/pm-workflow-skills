@@ -1,0 +1,7 @@
+interface:
+  display_name: "AI Product Engine · TAPD 交付"
+  short_description: "安全同步 TAPD：预览确认后写入并逐步回读核验"
+  default_prompt: "使用 $product-engine-tapd 安全同步这项已明确的产品需求到 TAPD：先读取、查重并展示完整预览；仅在我明确确认后创建或更新 Story、我的 Product Task 和明确附件，并在每一步后 Readback 核验。"
+
+policy:
+  allow_implicit_invocation: true
