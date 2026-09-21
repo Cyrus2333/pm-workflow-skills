@@ -2,7 +2,7 @@
 
 公共 Skill 不保存用户、组织、workspace ID、部门、项目列表、owner 或本地业务路径。用户级默认配置应位于公共仓库之外，且不得含密码或 token。
 
-默认文件位置为 `$CODEX_HOME/product-engine-tapd.defaults.yaml`；若 `CODEX_HOME` 未设置，则使用用户 Codex 配置根目录。若未来已有更权威的 Codex 用户配置约定，应优先迁移到该约定。
+默认文件位置为 `$CODEX_HOME/pm-tapd-deliver.defaults.yaml`；若 `CODEX_HOME` 未设置，则使用用户 Codex 配置根目录。若未来已有更权威的 Codex 用户配置约定，应优先迁移到该约定。 若本地仍有旧文件名 `product-engine-tapd.defaults.yaml`，迁移到本文件名后再使用，Skill 不自动读取旧路径。
 
 最小 schema：
 

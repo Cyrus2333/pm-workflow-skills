@@ -20,6 +20,9 @@ flowchart LR
   P --> U
   H --> U
   U -- "上线后复盘" --> M
+  D -. "可选 TAPD 占位" .-> T["pm-tapd-deliver"]
+  G -. "可选 TAPD 同步" .-> T
+  P -. "可选 TAPD 同步" .-> T
   D -. "质量审计" .-> Q["pm-quality-audit"]
   G -. "质量审计" .-> Q
   P -. "质量审计" .-> Q
@@ -27,7 +30,7 @@ flowchart LR
   M -. "质量审计" .-> Q
 ```
 
-默认主线是：`pm-requirement-define` → `pm-requirement-grade` → 按等级交付。每个阶段在交给下一环节前都要经过 `pm-quality-audit`；审计不是润色，而是判断是否真的达到交接门槛。需要完整规格时进入 `pm-prd-write`；需要团队视觉评审时，再由 `pm-prd-html` 将已确认 PRD 编译为“问题 → 主线 → 页面状态 → 内容 → 原型 → 规则 → 评审点”的阅读版，并在同一 HTML 内保留可按需回看的完整规格、固定侧栏和默认静态优先的 UX 级 SVG。对要求设计前评估页面效果的需求，页面内容契约是 PRD 的用户可见内容主源，HTML 不能依赖设计稿补齐信息；`prototypeReadiness` 是进入 HTML 编译前的门禁，HTML 的静态结构检查和视觉阅读验收是编译后的第二道门禁。研究、竞品和指标是证据增强 skill，只在 `pm-requirement-define` 判断缺口会影响决策时使用，并在形成证据包后回到需求定义；更新说明和指标复盘是交付后的同步与验证 skill。
+默认主线是：`pm-requirement-define` → `pm-requirement-grade` → 按等级交付。每个阶段在交给下一环节前都要经过 `pm-quality-audit`；审计不是润色，而是判断是否真的达到交接门槛。需要完整规格时进入 `pm-prd-write`；需要团队视觉评审时，再由 `pm-prd-html` 将已确认 PRD 编译为“问题 → 主线 → 页面状态 → 内容 → 原型 → 规则 → 评审点”的阅读版，并在同一 HTML 内保留可按需回看的完整规格、固定侧栏和默认静态优先的 UX 级 SVG。对要求设计前评估页面效果的需求，页面内容契约是 PRD 的用户可见内容主源，HTML 不能依赖设计稿补齐信息；`prototypeReadiness` 是进入 HTML 编译前的门禁，HTML 的静态结构检查和视觉阅读验收是编译后的第二道门禁。研究、竞品和指标是证据增强 skill，只在 `pm-requirement-define` 判断缺口会影响决策时使用，并在形成证据包后回到需求定义；更新说明和指标复盘是交付后的同步与验证 skill。安全同步 TAPD 是可选操作出口，不是产品决策或 PRD 的必经阶段。
 
 ## 1. Skill 职责地图
 
@@ -42,6 +45,7 @@ flowchart LR
 | 协作视觉交付 | `pm-prd-html` | 已确认且 `prototypeReadiness` 达到要求的 PRD，需要给产品、设计、研发、测试提供更易读的协作评审物 | 不重新做产品决策，不生成多个文档，不使用 PNG，不维护第二套规则；只编译 PRD 已确认的体验中间层，默认输出 `ux-prototype`，并检查内容覆盖、静态可降级性和真实阅读效果 | 单文件 `prd.html`，按阅读任务重组内容，保留可按需回看的完整规格，带固定可收起侧栏、真实视窗内可滚动的 SVG UX 原型 / 流程图、需求上下文、覆盖台账、一致性检查和静态 HTML 验收证据 |
 | 变化同步 | `pm-update-write` | 已确认结论、范围、上线内容或计划变化需要同步 | 不补做需求定义，不替代 PRD，不解释未验证因果 | 更新说明、变更通知、更新日志、行动项 |
 | 质量审计 | `pm-quality-audit` | 已有产品产物，需要判断是否完整、严谨、可交接 | 不替代原 skill 写正文，不补造事实，不用平均分掩盖硬缺陷 | 质量审计报告、缺陷清单、追溯矩阵、放行结论 |
+| 安全同步 TAPD | `pm-tapd-deliver` | 用户需要创建 / 更新 TAPD Story、当前 PM 的 Task 或明确附件 | 不重做定义、分级、PRD 或审计；不自动写入、不创建其他角色 Task、不猜测附件 | 完整写入预览；经明确确认后的顺序写入、Readback、Necessity Check 与停止报告 |
 
 ## 2.0 产物修订记录与版本追溯
 
@@ -134,6 +138,8 @@ flowchart LR
 2. **证据材料**：已有访谈 / 数据 / 竞品材料，但还没有产品结论。先用对应证据 skill 综合，再交回 `pm-requirement-define`。
 3. **已确认需求**：问题、目标、方向、一级范围和非目标基本清楚。进入 `pm-requirement-grade`，先定交付等级，再决定是否写 PRD。
 4. **已确认变更或上线结果**：结论已经确定，只需要同步或复盘。分别进入 `pm-update-write` 或 `pm-metrics-review`。
+
+安全同步 TAPD 是可选操作出口，不是产品决策或 PRD 的必经阶段。用户提出“同步 TAPD / 建 Story / 建产品 Task”时，Guide 只建议 `pm-tapd-deliver`；由该 Skill 根据当前信息完成 Preflight、查重和写入预览。需求不清则建议回到 `pm-requirement-define`，需求清楚但项目约定需要等级而等级缺失则建议 `pm-requirement-grade`，快速占位只要求最小信息。任何情况下都不得由 Router / Guide 自动写 TAPD。
 
 不要用“资料还不完整”作为万能追问理由。先判断缺口归属：项目事实自行查；用户 / 竞品 / 数据证据交给证据 skill；产品决策缺口才追问或深度质询；会影响等级的风险线索交给 `pm-requirement-grade`；页面行为、状态权限和验收交给 PRD；接口、队列、存储和算法交给研发 spec。
 

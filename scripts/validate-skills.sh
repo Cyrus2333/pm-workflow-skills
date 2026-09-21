@@ -21,8 +21,8 @@ while IFS= read -r skill_dir; do
   skill_name="$(basename "$skill_dir")"
   skill_file="$skill_dir/SKILL.md"
 
-  if [[ ! "$skill_name" =~ ^(pm|product-engine)-[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
-    fail "$skill_name must use lowercase pm-* or product-engine-* kebab-case"
+  if [[ ! "$skill_name" =~ ^pm-[a-z0-9]+(-[a-z0-9]+)+$ ]]; then
+    fail "$skill_name must use lowercase pm-object-action kebab-case"
   fi
 
   if [ ! -f "$skill_file" ]; then
@@ -88,8 +88,7 @@ while IFS= read -r skill_dir; do
       | sed "s/^['\"]//; s/['\"]$//"
   )"
 
-  if [ "$display_name" != "$skill_name" ] \
-    && ! { [[ "$skill_name" == product-engine-* ]] && [[ "$display_name" == "AI Product Engine · "* ]]; }; then
+  if [ "$display_name" != "$skill_name" ]; then
     fail "$agent_file display_name '$display_name' does not match '$skill_name'"
   fi
 
