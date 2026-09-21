@@ -19,6 +19,9 @@
 | `pm-metrics-review` | 需要复盘目标、上线效果、异常波动或补充规模 / 效果证据 | 行动可交给 `pm-requirement-define`、`pm-update-write` 或后续交付流程 |
 | `pm-update-write` | 结论、范围、上线内容或计划变化已经确认，需要同步、通知或留档 | 交给目标受众执行；后续效果进入 `pm-metrics-review` |
 | `pm-quality-audit` | 需要判断需求分析、分级、PRD、HTML、复盘等产物是否真的完整、严谨、可交接 | 返回 `PASS`、`PASS_WITH_CONDITIONS` 或 `BLOCKED`，带证据定位的缺陷与修复条件；不替代原 skill 写正文 |
+| `product-engine-tapd` | 已有足够明确的产品事项，需要安全创建或更新 TAPD Story、当前产品经理的 Product Task，或上传明确交付物 | 写前完成实时能力发现、字段解析、查重和完整预览；确认后逐项写入并 Readback，不重新定义产品需求 |
+
+`product-engine-tapd` 是可独立安装的 TAPD 交付能力。它依赖运行环境实际暴露的 TAPD MCP 工具，不包含账号、凭据、固定 workspace 或用户默认值；支持的具体写入范围以当次工具发现和只读 Preflight 为准。
 
 ### 产物修订记录与版本追溯
 
