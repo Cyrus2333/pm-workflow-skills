@@ -114,6 +114,7 @@ description: 对产品需求进行通用风险分级和交付路由。Use when C
 - 主要原因：
 - 本次路由包：L0 变更记录 / L1 AI Coding 任务边界 / L2 协作简报 / L3 PRD-spec 评审门禁 / H hotfix 治理包
 - 对应下一步 skill：pm-requirement-define / pm-prd-write / 暂不需要
+- 如用户需要同步已确认需求到 TAPD：可选 `pm-tapd-deliver`（不自动写入；由其单独 Preflight、预览和确认）
 - PRD 确认后是否需要单文件 HTML 协作交付：是 / 否（是则进入 `pm-prd-html`，不在本 skill 内生成）
 - 体验交付复杂度：常规 / 复杂 / 待确认（不改变风险等级）
 - 复杂体验交付要求：不适用 / 页面地图与导航契约 / 状态架构 / 复杂组件行为 / 端与布局矩阵 / 原型覆盖计划 / 页面内容契约与内容覆盖检查 / UX 原型交付配置与就绪门禁 / 静态 HTML-SVG 交付
@@ -155,6 +156,7 @@ description: 对产品需求进行通用风险分级和交付路由。Use when C
 - 是否需要研发 spec：不需要 / 按需 / 必须
 - 是否需要评审 / QA / 灰度 / 回滚：
 - 对应下一步 skill：pm-requirement-define / pm-prd-write / 暂不需要
+- 如用户需要创建 TAPD Story：可选 `pm-tapd-deliver`，复用本次已确认等级；不强制先写 PRD
 - PRD 确认后是否需要单文件 HTML 协作交付：是 / 否（是则进入 `pm-prd-html`，不在本 skill 内生成）
 ```
 

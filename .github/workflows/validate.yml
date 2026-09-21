@@ -22,3 +22,6 @@ jobs:
 
       - name: Run static HTML prototype validation
         run: python3 scripts/validate-html-prototypes.py
+
+      - name: Run TAPD contract tests
+        run: python3 -m unittest tests/test_pm_tapd_deliver.py

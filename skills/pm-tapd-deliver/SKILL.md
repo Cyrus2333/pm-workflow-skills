@@ -1,9 +1,9 @@
 ---
-name: product-engine-tapd
+name: pm-tapd-deliver
 description: 将已足够明确的产品需求安全同步到 TAPD，支持 Story、当前产品经理自己的 Task 和可用时的 Task 附件；所有写入均先读取、查重并展示完整预览，获得明确确认后才顺序写入并回读核验。适用于“同步到 TAPD”“建 Story”“建产品 Task”“上传明确交付物”等请求；不重新定义需求、评级、写 PRD 或绕过 MCP。
 ---
 
-# product-engine-tapd
+# pm-tapd-deliver
 
 将产品工作安全落到 TAPD。核心协议固定为：**读取 → Preflight → 查重 → 完整预览 → 明确确认 → 顺序写入 → Readback → Assert → 继续或停止**。
 
@@ -38,15 +38,15 @@ description: 将已足够明确的产品需求安全同步到 TAPD，支持 Stor
 - 扫描目录猜测交付物、重建丢失文件、覆盖同名附件或覆盖人工 Description；
 - 绕过当前运行环境注册的 MCP，或用脚本直接调用 TAPD HTTP API。
 
-已有质量审查结论（例如安装环境中的 `pm-quality-audit`）可作为上游事实消费，但不是快速占位 Story 的硬门槛；本 Skill 的 Preflight 是安全写入门槛，不替代审查，也不要求该可选 Skill 必须安装。
+`pm-quality-audit` 的质量结论可作为上游事实消费，但不是快速占位 Story 的硬门槛；本 Skill 的 Preflight 是安全写入门槛，不替代审计。
 
 ## Preflight 与路由
 
 只判断本次 TAPD 操作所需信息是否已经存在，不检查某个上游 Skill 是否曾运行：
 
 - 已有本次写入必要事实：直接准备 TAPD 预览；
-- 仅目标字段或项目约定确需等级而等级缺失时，回到当前产品定义依据做条件风险判断；明确指定且无冲突时复用，不为普通同步额外评级；
-- 写入所需产品事实不清楚：回到当前产品定义或需求依据核对相关事项，暂停依赖它的写入，不重启完整产品流程；
+- 仅目标字段或项目约定确需等级而等级缺失时，建议 `pm-requirement-grade`；用户明确指定且无冲突时直接复用，不为普通同步额外评级；
+- 写入所需产品事实不清楚：建议 `pm-requirement-define` 核对相关事项，暂停依赖它的写入，不重启完整产品流程；
 - 用户明确“快速占位”：至少取得可解析 workspace、名称及当前实体实际必填字段；背景 / 目标 / 范围只写已知信息，不能补造。
 
 不自动调用或递归路由到其他 Skill。用户可随时显式回到本 Skill。

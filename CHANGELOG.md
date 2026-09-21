@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- 新增 `pm-tapd-deliver`：把已足够明确的产品事项安全同步到 TAPD Story / 当前产品经理 Product Task / 明确附件；写前做实时能力发现、字段解析、查重和完整预览，确认后顺序写入并 Readback。Story 写后只读执行 Product Task Necessity Check，推荐不等于授权创建。
+- TAPD 同步是可选出口，不是需求定义或 PRD 的必经阶段；接入 README、WORKFLOW_GUIDE，以及 `pm-requirement-define` / `pm-requirement-grade` / `pm-prd-write` 的下游提示。不包含账号、凭据或固定 workspace。
+
 ### Changed
 
 - 将页面体验交付从“单点 HTML 原型优化”收敛为全链路契约：需求定义记录体验交付意图与静态预览风险，需求分级分别记录风险等级和原型 / 静态交付轴，`pm-prd-write` 负责 `pageSchema`、`contentContract`、`viewportContract`、`designSystemRefs`、`staticDelivery` 和 `prototypeReadiness`，`pm-prd-html` 负责静态优先 UX 原型编译，`pm-quality-audit` 负责跨阶段放行判断。

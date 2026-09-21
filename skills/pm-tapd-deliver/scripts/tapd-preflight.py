@@ -18,7 +18,7 @@ def inspect(skill, configs, server_names=(), tools=None):
               "configs": [], "servers": [], "discovered_tools": tools,
               "readonly_call": "not_performed_by_local_script"}
     if not result["skill_exists"]:
-        result.update(state="SKILL_MISSING", message="product-engine-tapd Skill 文件不存在。")
+        result.update(state="SKILL_MISSING", message="pm-tapd-deliver Skill 文件不存在。")
         return result
     for path in configs:
         item = {"path": str(path), "exists": path.is_file()}
@@ -52,11 +52,11 @@ def inspect(skill, configs, server_names=(), tools=None):
         result.update(state="CONFIG_UNVERIFIED", message="配置读取或解析失败；不能宣称 TAPD MCP 未配置。")
     elif result["servers"]:
         result.update(state="CONFIGURED_NOT_EXPOSED",
-                      message="product-engine-tapd 已加载，但当前 Codex 会话未暴露 TAPD MCP tools。",
+                      message="pm-tapd-deliver 已加载，但当前 Codex 会话未暴露 TAPD MCP tools。",
                       next_step="检查已列出的 enabled / 工具过滤设置；重启 Codex Desktop 或新开会话后重新执行 preflight。重启不保证 READY。")
     else:
         result.update(state="CONFIG_NOT_FOUND_IN_CHECKED_PATHS",
-                      message="product-engine-tapd 已加载，但当前 Codex 会话未暴露 TAPD MCP tools。",
+                      message="pm-tapd-deliver 已加载，但当前 Codex 会话未暴露 TAPD MCP tools。",
                       next_step="已检查的配置范围中缺失 TAPD MCP 配置；若另有托管配置或 server 使用别名，应补充该配置路径或别名后重查。")
     return result
 

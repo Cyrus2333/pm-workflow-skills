@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "skills" / "product-engine-tapd" / "scripts"
+SCRIPTS = ROOT / "skills" / "pm-tapd-deliver" / "scripts"
 
 
 def load_module(name: str, filename: str):
@@ -54,7 +54,7 @@ class TapdPreflightTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             skill = root / "SKILL.md"
-            skill.write_text("---\nname: product-engine-tapd\n---\n", encoding="utf-8")
+            skill.write_text("---\nname: pm-tapd-deliver\n---\n", encoding="utf-8")
             config = root / "config.toml"
             config.write_text('[mcp_servers.tapd]\ncommand = "placeholder"\n', encoding="utf-8")
             result = preflight.inspect(skill, [config], tools=[])
@@ -62,7 +62,7 @@ class TapdPreflightTests(unittest.TestCase):
         self.assertEqual(result["state"], "CONFIGURED_NOT_EXPOSED")
 
     def test_discovered_tools_still_require_live_read_probe(self):
-        skill = ROOT / "skills" / "product-engine-tapd" / "SKILL.md"
+        skill = ROOT / "skills" / "pm-tapd-deliver" / "SKILL.md"
         result = preflight.inspect(skill, [], tools=["tapd_get_stories"])
         self.assertFalse(result["ready"])
         self.assertEqual(result["state"], "READ_PROBE_REQUIRED")
