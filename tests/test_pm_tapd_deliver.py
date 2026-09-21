@@ -41,6 +41,19 @@ class TapdContractTests(unittest.TestCase):
         self.assertEqual(key, "custom_field_1")
         self.assertEqual(contract.resolve_enum(field, "【上线】发布&验收"), "release")
 
+    def test_resolves_json_encoded_enum_options(self):
+        fields = {
+            "custom_field_four": {
+                "label": "任务类别",
+                "readonly": False,
+                "options": '{"25":"【产品】方案策划","7":"【研发】编码"}',
+            }
+        }
+        key, field = contract.resolve_field(fields, "任务类别")
+        self.assertEqual(key, "custom_field_four")
+        self.assertEqual(contract.resolve_enum(field, "【研发】编码"), "7")
+        self.assertEqual(contract.resolve_enum(field, "25"), "25")
+
     def test_rejects_ambiguous_or_readonly_field(self):
         with self.assertRaises(ValueError):
             contract.resolve_field({"a": {"label": "状态"}, "b": {"label": "状态"}}, "状态")
@@ -160,6 +173,44 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(payload["action"], "create")
         self.assertEqual(payload["form"]["name"], "发布验证")
         self.assertEqual(payload["form"]["custom_field_1"], "release")
+
+    def test_task_category_dry_run_uses_display_label_and_preserves_status(self):
+        calls = []
+
+        def request(method, path, params, form):
+            calls.append((method, path, params, form))
+            if path == "/tasks/custom_fields_settings":
+                return {
+                    "http_status": 200,
+                    "data": [{"CustomFieldConfig": {
+                        "custom_field": "custom_field_four",
+                        "label": "任务类别",
+                        "options": '{"25":"【产品】方案策划","7":"【研发】编码"}',
+                    }}],
+                }
+            if path == "/tasks":
+                return {
+                    "http_status": 200,
+                    "data": [{"Task": {
+                        "id": "7", "workspace_id": "42", "name": "编码",
+                        "status": "open", "custom_field_four": "7",
+                    }}],
+                }
+            raise AssertionError(path)
+
+        payload = json.loads(self._run(
+            [
+                "write", "--entity", "tasks", "--dry-run",
+                "--payload", json.dumps({
+                    "workspace_id": "42", "id": "7", "name": "编码",
+                    "custom_fields": {"custom_field_four": "7"},
+                }),
+            ],
+            request=request,
+        ))
+        self.assertEqual(payload["form"]["custom_field_four"], "【研发】编码")
+        self.assertEqual(payload["form"]["status"], "open")
+        self.assertEqual([call[1] for call in calls], ["/tasks/custom_fields_settings", "/tasks"])
 
     def test_write_posts_when_not_dry_run(self):
         calls = []

@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 """Pure helpers for resolved schemas and complete duplicate-query results. No TAPD calls."""
 
+import json
 import unicodedata
+
+
+def _options_dict(raw):
+    if isinstance(raw, dict):
+        return {str(key): str(value) for key, value in raw.items()}
+    if isinstance(raw, str) and raw.strip():
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError:
+            return {part: part for part in raw.split("|") if part}
+        if isinstance(parsed, dict):
+            return {str(key): str(value) for key, value in parsed.items()}
+    return {}
 
 
 def resolve_field(fields, label, api_name=None):
@@ -23,8 +37,8 @@ def resolve_field(fields, label, api_name=None):
 
 
 def resolve_enum(field, value):
-    options = field.get("options")
-    if not isinstance(options, dict) or not options:
+    options = _options_dict(field.get("options"))
+    if not options:
         raise ValueError("enum unresolved; fetch actual schema")
     if value in options:
         return value

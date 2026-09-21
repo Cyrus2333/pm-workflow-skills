@@ -287,7 +287,16 @@ def normalize_options(raw: Any) -> dict[str, str]:
                 result[str(item)] = str(item)
         return result
     if isinstance(raw, str) and raw.strip():
-        return {part: part for part in raw.split("|") if part}
+        text = raw.strip()
+        # TAPD custom field settings sometimes encode the option map as a
+        # JSON string rather than returning an object.
+        try:
+            decoded = json.loads(text)
+        except json.JSONDecodeError:
+            decoded = None
+        if isinstance(decoded, (dict, list)):
+            return normalize_options(decoded)
+        return {part: part for part in text.split("|") if part}
     return {}
 
 
@@ -348,7 +357,7 @@ def compact_item(item: dict[str, Any], entity: str) -> dict[str, Any]:
     return compact
 
 
-def flatten_payload(payload: dict[str, Any]) -> dict[str, str]:
+def flatten_payload(payload: dict[str, Any], field_schema: dict[str, dict[str, Any]] | None = None, entity: str = "") -> dict[str, str]:
     form: dict[str, str] = {}
     custom = payload.get("custom_fields")
     for key, value in payload.items():
@@ -360,7 +369,16 @@ def flatten_payload(payload: dict[str, Any]) -> dict[str, str]:
     if isinstance(custom, dict):
         for key, value in custom.items():
             if value not in (None, ""):
-                form[str(key)] = stringify(value)
+                field = (field_schema or {}).get(str(key)) or {}
+                # TAPD's task category custom field stores the display label.
+                # Its schema exposes numeric option keys, so normalize key
+                # input to the label while accepting labels unchanged.
+                if entity == "tasks" and field.get("label") == "任务类别":
+                    options = field.get("options") or {}
+                    raw_value = stringify(value)
+                    form[str(key)] = options.get(raw_value, raw_value)
+                else:
+                    form[str(key)] = stringify(value)
     return form
 
 
@@ -764,7 +782,20 @@ def cmd_write(args: argparse.Namespace, request: RequestFn) -> dict[str, Any]:
     payload = json.loads(args.payload) if args.payload else json.loads(Path(args.payload_file).read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise AdapterError("payload must be a JSON object", 2)
-    form = flatten_payload(payload)
+    field_schema = {}
+    if args.entity == "tasks" and isinstance(payload.get("custom_fields"), dict):
+        field_schema = cmd_fields(argparse.Namespace(entity="tasks", workspace_id=stringify(payload.get("workspace_id"))), request)["fields"]
+    form = flatten_payload(payload, field_schema=field_schema, entity=args.entity)
+    # Preserve the latest task status unless the caller explicitly requested a
+    # transition. This protects against concurrent online edits, server-side
+    # defaults, or interface side effects during a partial field correction.
+    if args.entity == "tasks" and form.get("id") and "status" not in form:
+        current = cmd_get(
+            argparse.Namespace(entity="tasks", workspace_id=form.get("workspace_id", ""), id=form["id"]),
+            request,
+        )["item"]
+        if current.get("status"):
+            form["status"] = stringify(current["status"])
     if not form.get("workspace_id"):
         raise AdapterError("payload.workspace_id is required", 2)
     if not form.get("name") and not form.get("id"):
