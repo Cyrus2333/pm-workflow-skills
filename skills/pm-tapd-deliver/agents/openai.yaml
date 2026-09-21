@@ -1,7 +1,7 @@
 interface:
   display_name: "pm-tapd-deliver"
-  short_description: "安全同步 TAPD：预览确认后写入并逐步回读核验"
-  default_prompt: "使用 $pm-tapd-deliver 安全同步这项已明确的产品需求到 TAPD：先读取、查重并展示完整预览；仅在我明确确认后创建或更新 Story、我的 Product Task 和明确附件，并在每一步后 Readback 核验。"
+  short_description: "安全同步 TAPD：适配器预览确认后写入并逐步回读核验"
+  default_prompt: "使用 $pm-tapd-deliver 安全同步这项已明确的产品需求到 TAPD：只用 scripts/pm_tapd.py 做 Preflight、查重和 dry-run 预览；仅在我明确确认后写入 Story 或我的 Product Task，并在每一步后 Readback。不要使用 MCP，也不要直接 curl TAPD。"
 
 policy:
   allow_implicit_invocation: true

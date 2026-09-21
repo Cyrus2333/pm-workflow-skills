@@ -11,7 +11,10 @@ version: 1
 
 workspace:
   default_name: <已确认 workspace 名称>
+  default_id: <可选，仅作缓存>
 ```
+
+凭据不要写入本文件。Token 只放环境变量或家目录 `~/.tapd.json`。
 
 可选 workspace ID 只能作为加速缓存，任何正式写入前仍须实时解析并确认有效。用户默认值可被项目配置和本轮用户明确值覆盖。
 

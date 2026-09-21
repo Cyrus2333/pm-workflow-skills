@@ -52,9 +52,9 @@ N6 必须区分两个历史时点：初次写入与回读不一致的失败时�
 6. 上传并通过 Attachment Readback 后，才标记“已上传产出物”。
 7. Description 写有文件名但本地无文件时，不得视为附件存在。
 8. 用户要求上传交付物时，真实文件存在且附件能力可用则必须走上传与回读；不得只更新 Description 替代附件上传。
-9. 不按固定工具名判断能力：通用附件读取工具若以 `type=task` 实测成功，Task attachment list 应判为可用，即使 schema 文案未列出 Task。
-10. list、upload、Readback 分别检测；缺少 upload 时不得把已验证 list 误报为整体不可用。
-11. 本机配置声明附件 MCP 但当前会话未暴露工具时，标记会话未加载／未暴露；不改配置，要求新会话重新检测。
+9. V1 `capabilities.attachment` 为 false 时，直接报告 UNAVAILABLE；不得因 MCP 配置、CLI 安装或 Description 文件名改判可用。
+10. 用户要求上传或 done 依赖附件时，停止依赖附件的动作，并让用户选择只做 Story/Task 或全部停止。
+11. 无必须附件的 Task，V1 仍可在确认完成、日期和投入人天后 done；不得声称已上传。
 
 ## 安全与确认
 

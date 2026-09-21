@@ -6,8 +6,9 @@
 
 ### Added
 
-- 新增 `pm-tapd-deliver`：把已足够明确的产品事项安全同步到 TAPD Story / 当前产品经理 Product Task / 明确附件；写前做实时能力发现、字段解析、查重和完整预览，确认后顺序写入并 Readback。Story 写后只读执行 Product Task Necessity Check，推荐不等于授权创建。
+- 新增 `pm-tapd-deliver`：把已足够明确的产品事项安全同步到 TAPD Story / 当前产品经理 Product Task；写前做实时字段解析、查重和完整预览，确认后顺序写入并 Readback。Story 写后只读执行 Product Task Necessity Check，推荐不等于授权创建。
 - TAPD 同步是可选出口，不是需求定义或 PRD 的必经阶段；接入 README、WORKFLOW_GUIDE，以及 `pm-requirement-define` / `pm-requirement-grade` / `pm-prd-write` 的下游提示。不包含账号、凭据或固定 workspace。
+- `pm-tapd-deliver` 传输层改为官方 OpenAPI 窄适配器 `scripts/pm_tapd.py`，不再依赖 MCP 或第三方 CLI。V1 支持 Story/Task 预检、查重、dry-run、写入和 Readback；标准附件、真实 mention 与完整 workflow 查询明确不可用。
 
 ### Changed
 

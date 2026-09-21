@@ -75,7 +75,7 @@ Task 查重以“同一项具体工作／同一轮交付”为准，不能仅因
 
 Task 标题自然语言表达，不加“【产品】”前缀。Product Task 类别必须实时解析 logical field 与合法枚举：高置信推荐在预览中注明；低置信要求用户选择；字段不存在时不写。
 
-用户明确要求“创建后进行中”时，严格执行 create(open) → Readback → open 到 progressing → Readback。不得根据上下文自动改为 progressing。若当前 MCP 没有独立 Task workflow 查询能力，Task API schema 只能说明 `progressing` 是支持的目标状态，不能在写入前宣称 transition 已被 workflow 证明合法；最终以服务端接受写入并 Readback 为准。
+用户明确要求“创建后进行中”时，严格执行 create(open) → Readback → open 到 progressing → Readback。不得根据上下文自动改为 progressing。V1 没有独立 Task workflow 查询能力，Task 字段 schema 只能说明 `progressing` 是支持的目标状态，不能在写入前宣称 transition 已被 workflow 证明合法；最终以服务端接受写入并 Readback 为准。
 
 用户明确完成时，先确认工作已完成、实际完成日期和实际投入人天。先根据当前 Task 与已确认交付计划判断是否存在必须上传的附件：存在时，附件必须已上传且 Readback；不存在时，附件不是 done 前置条件，attachment capability unavailable 也不得阻止 done。日期未给时可推荐当天并写入预览；投入人天不得推测。若没有可靠的合法写入字段，阻止 done；V1 不自动转写 timesheet。
 
