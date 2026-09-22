@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "kind": "mobile_screen_storyboard",
+  "title": "需求名称｜关键页面",
+  "subtitle": "结构示意：内容与状态为已确认方案，视觉以最终设计稿为准",
+  "columns": 3,
+  "screens": [
+    {
+      "id": "entry-screen",
+      "step": "1",
+      "title": "入口页面名",
+      "nav": "页面导航标题",
+      "caption": "这一步读者要知道什么（何时触达、从哪来）",
+      "blocks": [
+        {"type": "card", "title": "已决定的真实文案标题",
+         "body": "正式 PRD 中已确认的完整文案，不要写占位提示。",
+         "action": "已决定的主按钮文案"},
+        {"type": "text", "dim": true, "text": "辅助说明文案（如消息保留规则）。"}
+      ]
+    },
+    {
+      "id": "main-screen",
+      "step": "2",
+      "title": "主操作页面名",
+      "nav": "页面导航标题",
+      "caption": "进入条件 / 校验时机",
+      "blocks": [
+        {"type": "banner", "tone": "warning", "text": "规则用用户可见的 UI 元素表达（横幅/禁用按钮/提示），不画虚线注释框"},
+        {"type": "list", "items": [
+          {"title": "真实示例数据条目", "note": "具体时间/状态"},
+          {"title": "第二条", "note": "保持真实业务口径"}
+        ]},
+        {"type": "section", "title": "信息分组标题"},
+        {"type": "kv_group", "fields": [
+          {"label": "字段", "value": "已决定的值"}
+        ]},
+        {"type": "button", "text": "主操作", "style": "primary"},
+        {"type": "button", "text": "次操作", "style": "secondary"},
+        {"type": "button", "text": "不可用状态示例", "style": "disabled"}
+      ]
+    },
+    {
+      "id": "result-screen",
+      "step": "3",
+      "title": "结果页",
+      "nav": "结果",
+      "caption": "进入本页的唯一条件",
+      "blocks": [
+        {"type": "result", "tone": "success", "title": "已决定的结果标题", "body": "结果说明"},
+        {"type": "button", "text": "结果后主操作", "style": "primary"}
+      ]
+    }
+  ],
+  "links": [
+    {"from": "entry-screen", "to": "main-screen", "label": "触发动作"},
+    {"from": "main-screen", "to": "result-screen", "label": "提交"}
+  ]
+}

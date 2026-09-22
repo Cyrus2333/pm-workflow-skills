@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "kind": "page_interaction_overview",
+  "question": "用户从入口开始，在每个页面看到什么、执行什么动作、分别进入哪些页面状态和结果",
+  "interaction_model": "/absolute/path/to/interaction-model.json",
+  "screen_source": "/absolute/path/to/key-pages-spec.json（可选；页面卡片用 screen_ref 引用其中 screens[].id，与需求详情故事板同源）",
+  "coverage_mode": "review_complete",
+  "focus_state_ids": [],
+  "focus_transition_ids": [],
+  "delivery_role": "zoomable",
+  "reading_direction": "left_to_right",
+  "cards": [
+    {
+      "id": "CARD-ENTRY",
+      "title": "入口页面或触点",
+      "kind": "entry",
+      "state_ids": [
+        "STATE-ID"
+      ],
+      "surface_ids": [
+        "SURFACE-ID"
+      ],
+      "screen": {
+        "task": "用户此刻要完成什么",
+        "key_content": [
+          "关键内容区",
+          "状态或提示"
+        ],
+        "actions": [
+          "主操作",
+          "次操作"
+        ],
+        "visible_feedback": "当前反馈或无反馈"
+      },
+      "visual_ref": "overview.svg#entry",
+      "layout_group": "入口"
+    },
+    {
+      "id": "CARD-AGGREGATED-RESULT",
+      "title": "同一结果页的可见变体",
+      "kind": "result",
+      "state_ids": [
+        "STATE-FIRST",
+        "STATE-REPLACE"
+      ],
+      "state_variants": [
+        {
+          "state_id": "STATE-FIRST",
+          "label": "首次成功",
+          "difference": "展示首次奖励"
+        },
+        {
+          "state_id": "STATE-REPLACE",
+          "label": "替代成功",
+          "difference": "不重复发放奖励"
+        }
+      ],
+      "surface_ids": [
+        "SURFACE-RESULT"
+      ],
+      "screen": {
+        "task": "用户确认结果并决定下一步",
+        "key_content": [
+          "结果状态",
+          "结果摘要"
+        ],
+        "actions": [
+          "继续或退出"
+        ],
+        "visible_feedback": "成功、失败或限制原因"
+      },
+      "visual_ref": "overview.svg#result-variants",
+      "layout_group": "结果"
+    },
+    {
+      "id": "CARD-TRANSIENT",
+      "title": "加载/校验/处理中（瞬态）",
+      "kind": "chip",
+      "state_ids": [
+        "STATE-TRANSIENT（模型中 visibility=transient）"
+      ],
+      "surface_ids": [],
+      "layout_group": "主路径",
+      "_comment": "chip 只能承载 transient 状态；不写 screen/visual_ref，不渲染手机屏"
+    },
+    {
+      "id": "CARD-PAGE-REF",
+      "title": "页面卡片（同源引用写法）",
+      "kind": "page",
+      "state_ids": [
+        "STATE-PAGE"
+      ],
+      "surface_ids": [
+        "SURFACE-ID"
+      ],
+      "screen_ref": "storyboard-screen-id（引用 screen_source 中的屏幕，内容与需求详情故事板一致；有 screen_ref 时不再写内联 screen）",
+      "visual_ref": "overview.svg#page",
+      "layout_group": "主路径"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "EDGE-01",
+      "from_card": "CARD-ENTRY",
+      "to_card": "CARD-NEXT",
+      "label": "用户动作或系统条件",
+      "kind": "primary",
+      "transition_ids": [
+        "TRANSITION-ID"
+      ]
+    }
+  ],
+  "render": {
+    "source_path": "/absolute/path/to/overview.svg",
+    "preview_path": "/absolute/path/to/overview.png"
+  }
+}

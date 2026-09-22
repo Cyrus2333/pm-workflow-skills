@@ -1,0 +1,12 @@
+{
+  "background": "#ffffff",
+  "canvas": "#ffffff",
+  "block": "#f2f2f2",
+  "line": "#8c8c8c",
+  "text": "#111111",
+  "subtext": "#595959",
+  "accent": "#262626",
+  "disabled": "#d9d9d9",
+  "skeleton": "#e8e8e8",
+  "font": "PingFang SC, Microsoft YaHei, sans-serif"
+}

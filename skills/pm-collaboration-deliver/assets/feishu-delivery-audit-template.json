@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.1",
+  "platform": "feishu_docx",
+  "document": {
+    "url": "https://example.feishu.cn/docx/xxxxxxxx",
+    "document_id": "xxxxxxxx",
+    "revision_id": 1,
+    "fetched_xml": "/absolute/path/to/fetched-document.xml",
+    "checked_at": "ISO-8601 time",
+    "required_headings": ["需求背景", "需求目标", "需求范围", "产品方案", "需求详情", "验收标准"],
+    "required_phrases": ["本期范围"]
+  },
+  "publish": {
+    "strategy": "create",
+    "identity": "user",
+    "overwrite_used": false,
+    "protected_resources_checked": true
+  },
+  "visuals": [
+    {
+      "id": "VIS-01",
+      "question": "读者需要通过这张图回答什么",
+      "resource_type": "whiteboard",
+      "block_token": "whiteboard-token",
+      "source_type": "mermaid",
+      "delivery_role": "inline",
+      "preview_path": "/absolute/path/to/exported-preview.jpg",
+      "checked_at": "ISO-8601 time",
+      "checks": {
+        "content_complete": "pass",
+        "text_legible": "pass",
+        "line_clarity": "pass",
+        "canvas_fit": "pass",
+        "document_scale": "pass",
+        "inline_readability": "pass",
+        "zoom_readability": "not_applicable"
+      },
+      "issues": []
+    }
+  ],
+  "document_view": {
+    "target": "Feishu desktop reading view",
+    "checked_at": "ISO-8601 time",
+    "checks": {
+      "title_and_outline": "pass",
+      "scanability": "pass",
+      "table_layout": "pass",
+      "visual_placement": "pass",
+      "visual_scale": "pass",
+      "links_and_resources": "pass",
+      "traditional_structure": "pass",
+      "terminology_layering": "pass",
+      "local_visual_proximity": "pass"
+    },
+    "issues": []
+  },
+  "reader_test": {
+    "reader_context": "Only the published Feishu document is available",
+    "result": "pass",
+    "questions_answered": ["Q-01"],
+    "issues": []
+  }
+}

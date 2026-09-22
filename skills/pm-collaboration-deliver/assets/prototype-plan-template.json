@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0",
+  "source_prd": "/absolute/path/to/formal-prd.md",
+  "interaction_model": "/absolute/path/to/interaction-model.json",
+  "readiness": {
+    "product_semantics": "interaction_complete",
+    "visual_context": "existing_ui",
+    "decision": "generate",
+    "missing_facts": []
+  },
+  "evidence": [
+    {
+      "id": "E-PRD",
+      "type": "formal_prd",
+      "path": "/absolute/path/to/formal-prd.md",
+      "authority": "product_behavior",
+      "status": "confirmed",
+      "scope": "页面、状态、操作、迁移与恢复"
+    },
+    {
+      "id": "E-SCREEN-01",
+      "type": "screenshot",
+      "path": "/absolute/path/to/current-screen.png",
+      "authority": "observational",
+      "role": "current_ui",
+      "status": "confirmed",
+      "scope": "当前页面壳与主要信息区",
+      "sensitive_data": "checked",
+      "observations": [
+        {
+          "id": "OBS-01",
+          "kind": "observed",
+          "statement": "底部存在一个主操作区"
+        },
+        {
+          "id": "OBS-02",
+          "kind": "unknown",
+          "statement": "无法从单张截图判断提交失败后的恢复方式"
+        }
+      ]
+    }
+  ],
+  "surfaces": [
+    {
+      "id": "PAGE-01",
+      "purpose": "用户完成当前核心任务",
+      "source_anchors": ["PRD 2.3 / PAGE-01", "FR-01"],
+      "evidence_ids": ["E-PRD", "E-SCREEN-01"],
+      "design_reuse": {
+        "strategy": "adapt_existing",
+        "source_ids": ["E-SCREEN-01"],
+        "rationale": "沿用现有页面壳，只表达本次新增状态和操作"
+      },
+      "regions": [
+        {
+          "id": "IA-01",
+          "purpose": "展示用户做出判断所需的核心信息",
+          "priority": "primary",
+          "visible_content": "已确认的关键信息",
+          "source_anchors": ["PRD 2.3 / IA-01"]
+        }
+      ],
+      "state_ids": ["STATE-READY", "STATE-PROCESSING", "STATE-SUCCESS"],
+      "action_ids": ["ACTION-SUBMIT"]
+    }
+  ],
+  "outputs": [
+    {
+      "id": "PROTO-01",
+      "reader_question": "用户从确认到得到结果时，页面如何连续反馈",
+      "kind": "interaction_storyboard",
+      "surface_ids": ["PAGE-01"],
+      "state_ids": ["STATE-READY", "STATE-PROCESSING", "STATE-SUCCESS"],
+      "transition_ids": ["TRANS-SUBMIT", "TRANS-SUCCESS"],
+      "evidence_ids": ["E-PRD", "E-SCREEN-01"],
+      "source_anchors": ["FR-01", "RULE-01", "AC-01"],
+      "coverage": "focused",
+      "delivery_role": "inline",
+      "placement": "需求详情 / 核心任务",
+      "strategy": "adapt_existing",
+      "status": "planned"
+    },
+    {
+      "id": "PROTO-OVERVIEW",
+      "reader_question": "用户从入口开始会经过哪些页面状态，每个动作、分支、返回和结果分别通向哪里",
+      "kind": "page_interaction_overview",
+      "surface_ids": ["PAGE-01"],
+      "evidence_ids": ["E-PRD", "E-SCREEN-01"],
+      "source_anchors": ["主流程", "FR-01", "RULE-01", "AC-01"],
+      "coverage": "complete",
+      "delivery_role": "zoomable",
+      "placement": "产品方案 / 页面交互总览",
+      "strategy": "adapt_existing",
+      "status": "planned",
+      "overview_spec": "/absolute/path/to/page-interaction-overview.json"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "kind": "flow_diagram",
+  "title": "需求名称｜产品主流程",
+  "subtitle": "主路径为深色实线；红色虚线为失败/拦截收口；灰色虚线为返回或再次进入",
+  "direction": "LR",
+  "nodes": [
+    {"id": "entry", "label": "入口：用户从哪里进入", "type": "start"},
+    {"id": "check", "label": "关键判断写成一个\n可回答是/否的问题？", "type": "decision"},
+    {"id": "main", "label": "主路径页面/动作\n可观察的页面反馈或业务结果", "type": "process"},
+    {"id": "system", "label": "系统处理（异步/外部依赖）\n禁止什么、等待什么", "type": "system"},
+    {"id": "success", "label": "成功结果\n用户或业务可观察的结果", "type": "end"},
+    {"id": "blocked", "label": "失败/拦截统一收口\n恢复到哪个可行动状态", "type": "end"}
+  ],
+  "edges": [
+    {"from": "entry", "to": "check", "label": "", "kind": "primary"},
+    {"from": "check", "to": "main", "label": "条件成立", "kind": "primary"},
+    {"from": "check", "to": "blocked", "label": "条件不成立", "kind": "exception"},
+    {"from": "main", "to": "system", "label": "用户动作", "kind": "primary"},
+    {"from": "system", "to": "success", "label": "明确成功", "kind": "primary"},
+    {"from": "system", "to": "blocked", "label": "失败 / 超时 / 结果不明", "kind": "exception"},
+    {"from": "blocked", "to": "check", "label": "用户可再次进入（如适用）", "kind": "return"}
+  ],
+  "groups": [
+    {"title": "可选：阶段/角色分组", "nodes": ["check", "main", "system"]}
+  ]
+}
