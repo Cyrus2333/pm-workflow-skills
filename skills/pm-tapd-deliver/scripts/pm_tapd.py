@@ -333,7 +333,7 @@ def compact_item(item: dict[str, Any], entity: str) -> dict[str, Any]:
         "workspace_id": workspace,
         "name": stringify(item.get("name")),
         "status": stringify(item.get("status")),
-        "owner": stringify(item.get("owner")),
+        "owner": stringify(item.get("owner")).rstrip(";"),
         "description": stringify(item.get("description")),
         "url": item.get("url")
         or (f"{web_base()}/{workspace}/prong/{entity}/view/{ident}" if workspace and ident else ""),
@@ -346,6 +346,8 @@ def compact_item(item: dict[str, Any], entity: str) -> dict[str, Any]:
     else:
         compact["priority"] = stringify(item.get("priority") or item.get("priority_label"))
         compact["workitem_type_id"] = stringify(item.get("workitem_type_id"))
+        compact["begin"] = stringify(item.get("begin"))
+        compact["due"] = stringify(item.get("due"))
         compact["category_id"] = stringify(item.get("category_id"))
         compact["label"] = stringify(item.get("label"))
     custom = {
@@ -512,8 +514,15 @@ def normalize_transitions(data: Any) -> list[dict[str, str]]:
             or data.get("previous_status")
             or data.get("origin_status")
             or data.get("from_status")
+            or data.get("StepPrevious")
         )
-        dst = data.get("to") or data.get("next_status") or data.get("destination_status") or data.get("to_status")
+        dst = (
+            data.get("to")
+            or data.get("next_status")
+            or data.get("destination_status")
+            or data.get("to_status")
+            or data.get("StepNext")
+        )
         if src and dst is not None:
             if isinstance(dst, list):
                 for item in dst:

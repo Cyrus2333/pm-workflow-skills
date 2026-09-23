@@ -12,6 +12,7 @@
 
 ### Changed
 
+- 同步本地 TAPD 适配器兼容性修复：规范化负责人末尾分号、保留 Story 日期字段，并兼容工作流返回的 `StepPrevious` / `StepNext` 状态字段；保留仓库已有历史补录和动作包协议。
 - 修正 TAPD Skill 同步时的覆盖问题：恢复历史补录、动作包 / 断点续作、Readback 差异分级、日期证据和附件映射协议，并保留 Story 分类 / 标签实时必填校验。
 - 同步本地 `pm-tapd-deliver` 迭代：Story 的分类与标签改为创建 / 更新前从实时 schema 唯一解析的必填字段，dry-run 预览和 Readback 均必须显式携带并断言 `category_id` / `label`；补充“未分类”、缺失、歧义和非法枚举的阻断校验及离线回归测试。
 - 将页面体验交付从“单点 HTML 原型优化”收敛为全链路契约：需求定义记录体验交付意图与静态预览风险，需求分级分别记录风险等级和原型 / 静态交付轴，`pm-prd-write` 负责 `pageSchema`、`contentContract`、`viewportContract`、`designSystemRefs`、`staticDelivery` 和 `prototypeReadiness`，`pm-prd-html` 负责静态优先 UX 原型编译，`pm-quality-audit` 负责跨阶段放行判断。

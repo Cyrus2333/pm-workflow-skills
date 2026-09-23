@@ -33,12 +33,29 @@ def story_schema_request(method, path, params, form):
 
 
 class StoryRequiredFieldTests(unittest.TestCase):
+    def test_transition_parser_supports_tapd_step_fields(self):
+        transitions = pm_tapd.normalize_transitions(
+            {"WorkflowTransition": {"StepPrevious": "planning", "StepNext": "developing"}}
+        )
+        self.assertEqual(transitions, [{"from": "planning", "to": "developing"}])
+
     def test_compact_item_keeps_category_id(self):
         item = pm_tapd.compact_item(
-            {"id": "1", "workspace_id": "w", "category_id": "category-1", "label": "常规工作项"},
+            {
+                "id": "1",
+                "workspace_id": "w",
+                "owner": "黄景业;",
+                "begin": "2026-09-01",
+                "due": "2026-09-02",
+                "category_id": "category-1",
+                "label": "常规工作项",
+            },
             "stories",
         )
         self.assertEqual(item["category_id"], "category-1")
+        self.assertEqual(item["owner"], "黄景业")
+        self.assertEqual(item["begin"], "2026-09-01")
+        self.assertEqual(item["due"], "2026-09-02")
 
     def test_dry_run_resolves_required_story_fields(self):
         args = argparse.Namespace(
