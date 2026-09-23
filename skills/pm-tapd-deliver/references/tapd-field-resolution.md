@@ -45,3 +45,13 @@ Story 的 `category_id`（逻辑字段“分类”）和 `label`（逻辑字段�
 根据实际工作和实时类别枚举提出候选，不硬编码组织专用类别。事实源、schema API和写参数是不同证据：同名label可能对应多个API字段，必须按实际写API字段唯一映射。两个工具返回冲突时核对实体类型、缓存/权限与权威字段读取；不能用空数组覆盖非空实时schema，也不能盲目合并。
 
 结构化字段解析可复用 `scripts/tapd-contract.py`：同名 label 不唯一即拒绝，明确当前写 API 字段后再解析枚举。TAPD 某些自定义字段会把选项映射以 JSON 字符串返回，适配器必须先解析为 `key → display label`，不能把整段 JSON 当成单个选项。Product Task 的“任务类别”字段写入时使用实时枚举的 display label；适配器可将传入的合法数字 key 规范化为中文 label，避免任务页面显示内部数字。该纯函数不抓取 schema、不判定业务推荐正确，也不执行写入。
+
+## 6. 日期证据与单日规则
+
+日期字段的事实来源必须写入预览：`user_explicit`、`documented_event_date`、`documented_interval`、`project_default` 或 `unknown`。需求包只出现一个明确日期时，默认只能证明“发生/确认/发布日”，不能自动证明 Task 的执行区间。只有用户或项目规则明确采用“同日开始/结束”时，才可写成同日区间；否则列为缺口并询问。
+
+文件修改时间、当前系统日期、分支名和模型推测都不是 Task 开始/结束日期的事实来源。需求的发布时间不能自动当成每个 Task 的实际开始日，除非预览明确说明这是用户确认的项目记录规则。
+
+## 7. 枚举提交值与展示值
+
+实时 schema 可能返回对象、列表、`key|label` 文本或 JSON 字符串。适配器必须先归一化为 `option_key -> display_label`，再解析用户给出的 label/key。预览同时展示：逻辑值、提交值、Readback 展示值和语义等价证据。未经解析的数字 key 不得直接写入用户可见的任务类别等展示字段；若 TAPD 某字段契约要求 key，则提交 key 并在 Readback 断言 label，不能把“页面显示数字”误判为成功。
