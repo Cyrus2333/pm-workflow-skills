@@ -12,6 +12,7 @@
 
 ### Changed
 
+- 同步本地 `pm-tapd-deliver` 迭代：Story 的分类与标签改为创建 / 更新前从实时 schema 唯一解析的必填字段，dry-run 预览和 Readback 均必须显式携带并断言 `category_id` / `label`；补充“未分类”、缺失、歧义和非法枚举的阻断校验及离线回归测试。
 - 将页面体验交付从“单点 HTML 原型优化”收敛为全链路契约：需求定义记录体验交付意图与静态预览风险，需求分级分别记录风险等级和原型 / 静态交付轴，`pm-prd-write` 负责 `pageSchema`、`contentContract`、`viewportContract`、`designSystemRefs`、`staticDelivery` 和 `prototypeReadiness`，`pm-prd-html` 负责静态优先 UX 原型编译，`pm-quality-audit` 负责跨阶段放行判断。
 - 将 `pm-prd-html` 默认档位统一为 `ux-prototype`；`wireframe` 仅在显式选择时使用。页面状态的 SVG 必须直接存在于 HTML 初始 DOM，JavaScript 仅做渐进增强；禁止把 `innerHTML` / 运行时渲染作为受限预览下的唯一展示路径。
 - 同步更新 README、WORKFLOW_GUIDE、ITERATION_GUIDE、CONTRIBUTING、PROGRESS、命令入口、分级路由 / 模板、项目画像、`agents/openai.yaml` 和示例，新增静态 HTML 原型检查脚本并接入 CI，避免上下游和项目引导文件继续保留旧口径。

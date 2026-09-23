@@ -55,3 +55,9 @@
 - 传输层改为仓库内官方 OpenAPI 窄适配器 `scripts/pm_tapd.py`：模型不直接 curl，不绑定 MCP 或第三方 CLI。覆盖 Story/Task 预检、查重、dry-run、写入、Readback、Story workflow 证明、真实 mention 和标准附件；Task workflow 在官方拒绝时诚实回退，附件 upload 按社区合同实现，失败不伪造。
 - 保留安全协议：实时字段解析、查重、预览确认、顺序写入、Readback、Necessity Check；不引入组织专用默认值。
 - #4 已关闭，避免并行维护两套 TAPD skill。
+
+## TAPD Skill 同步与分类标签校验（2026-09-24）
+
+- 已将本机最新 `pm-tapd-deliver` 同步回仓库，保持适配器合同、交付协议、字段解析、预览模板和测试用例一致。
+- 修复 Story Readback 投影遗漏 `category_id` 的问题；Story 创建 / 更新现在必须根据实时 schema 唯一解析分类和标签，禁止缺失、歧义、非法值或“未分类”兜底。
+- 新增 6 个 Skill 内离线回归用例，并更新仓库级 TAPD 测试夹具，覆盖 dry-run、正式写入与 Readback 断言。

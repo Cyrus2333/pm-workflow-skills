@@ -28,6 +28,24 @@ adapter = load_module("pm_tapd", "pm_tapd.py")
 deliverables = load_module("verify_local_deliverables", "verify-local-deliverables.py")
 
 
+def story_schema_response():
+    return {
+        "http_status": 200,
+        "data": {
+            "category_id": {
+                "label": "分类",
+                "html_type": "select",
+                "options": {"category-1": "AI学练项目", "-1": "未分类"},
+            },
+            "label": {
+                "label": "标签",
+                "html_type": "multi_select",
+                "options": {"常规工作项": "常规工作项"},
+            },
+        },
+    }
+
+
 class TapdContractTests(unittest.TestCase):
     def test_resolves_writable_field_and_enum(self):
         fields = {
@@ -147,8 +165,13 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(payload["duplicates"]["state"], "incomplete")
         self.assertFalse(payload["query"]["complete"])
 
-    def test_write_dry_run_does_not_post(self):
+    def test_write_dry_run_resolves_story_fields_and_does_not_post(self):
+        calls = []
+
         def request(method, path, params, form):
+            calls.append((method, path))
+            if path == "/stories/get_fields_info":
+                return story_schema_response()
             raise AssertionError("dry-run must not call TAPD")
 
         payload = json.loads(self._run(
@@ -163,6 +186,8 @@ class AdapterTests(unittest.TestCase):
                         "workspace_id": "42",
                         "name": "发布验证",
                         "description": "背景",
+                        "category_id": "AI学练项目",
+                        "label": "常规工作项",
                         "custom_fields": {"custom_field_1": "release"},
                     }
                 ),
@@ -172,7 +197,10 @@ class AdapterTests(unittest.TestCase):
         self.assertTrue(payload["dry_run"])
         self.assertEqual(payload["action"], "create")
         self.assertEqual(payload["form"]["name"], "发布验证")
+        self.assertEqual(payload["form"]["category_id"], "category-1")
+        self.assertEqual(payload["form"]["label"], "常规工作项")
         self.assertEqual(payload["form"]["custom_field_1"], "release")
+        self.assertEqual(calls, [("GET", "/stories/get_fields_info")])
 
     def test_task_category_dry_run_uses_display_label_and_preserves_status(self):
         calls = []
@@ -217,9 +245,17 @@ class AdapterTests(unittest.TestCase):
 
         def request(method, path, params, form):
             calls.append((method, path, form))
+            if path == "/stories/get_fields_info":
+                return story_schema_response()
             return {
                 "http_status": 200,
-                "data": [{"Story": {"id": "9", "workspace_id": "42", "name": "发布验证"}}],
+                "data": [{"Story": {
+                    "id": "9",
+                    "workspace_id": "42",
+                    "name": "发布验证",
+                    "category_id": "category-1",
+                    "label": "常规工作项",
+                }}],
             }
 
         payload = json.loads(self._run(
@@ -228,21 +264,35 @@ class AdapterTests(unittest.TestCase):
                 "--entity",
                 "stories",
                 "--payload",
-                json.dumps({"workspace_id": "42", "name": "发布验证"}),
+                json.dumps({
+                    "workspace_id": "42",
+                    "name": "发布验证",
+                    "category_id": "AI学练项目",
+                    "label": "常规工作项",
+                }),
             ],
             request=request,
         ))
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["item"]["id"], "9")
-        self.assertEqual(calls[0][0], "POST")
-        self.assertEqual(calls[0][1], "/stories")
+        self.assertEqual(calls[0][0], "GET")
+        self.assertEqual(calls[0][1], "/stories/get_fields_info")
+        self.assertEqual(calls[-1][0], "POST")
+        self.assertEqual(calls[-1][1], "/stories")
 
     def test_readback_detects_field_mismatch(self):
         def request(method, path, params, form):
             self.assertEqual(path, "/stories")
             return {
                 "http_status": 200,
-                "data": [{"Story": {"id": "9", "workspace_id": "42", "name": "别的标题", "status": "planning"}}],
+                "data": [{"Story": {
+                    "id": "9",
+                    "workspace_id": "42",
+                    "name": "别的标题",
+                    "status": "planning",
+                    "category_id": "category-1",
+                    "label": "常规工作项",
+                }}],
             }
 
         payload = json.loads(self._run(
@@ -255,7 +305,12 @@ class AdapterTests(unittest.TestCase):
                 "--id",
                 "9",
                 "--expect",
-                json.dumps({"name": "发布验证", "workspace_id": "42"}),
+                json.dumps({
+                    "name": "发布验证",
+                    "workspace_id": "42",
+                    "category_id": "category-1",
+                    "label": "常规工作项",
+                }),
             ],
             request=request,
         ))

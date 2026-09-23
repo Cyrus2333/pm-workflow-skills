@@ -30,7 +30,7 @@ python3 scripts/pm_tapd.py <command>
 | `fields --workspace-id <id> --entity stories/tasks` | 拉字段 schema | 否 |
 | `find --entity ... --workspace-id ... --name ...` | 分页查重 | 否 |
 | `get --entity ... --workspace-id ... --id ...` | 读一条 | 否 |
-| `write --entity ... --payload '<json>' --dry-run` | 只展开将 POST 的 form | 否 |
+| `write --entity ... --payload '<json>' --dry-run` | 只展开将 POST 的 form；Story 强制实时解析分类和标签，Task 自定义枚举会先读取实时 schema 规范化 | 否（Story / Task dry-run 可能需要只读 schema/get） |
 | `write --entity ... --payload '<json>'` | 创建或更新 | 是 |
 | `readback --entity ... --workspace-id ... --id ... --expect '<json>'` | GET 后按字段断言 | 否 |
 | `workflow --entity ... --workspace-id ... [--workitem-type-id ...] --from ... --to ...` | 写入前证明状态流转 | 否 |
@@ -42,7 +42,7 @@ python3 scripts/pm_tapd.py <command>
 | `attachments upload --dry-run ...` | 本地校验并查重，不 POST | 否 |
 | `attachments upload ...` | 上传一个文件并回读 | 是 |
 
-`write` 的 payload 为 JSON 对象。有 `id` 则更新，否则创建。`custom_fields` 会展开成 `custom_field_*` 表单字段。Story / Task Description 原样提交，不做 Markdown 转换。普通写入 POST 使用 `application/x-www-form-urlencoded`；附件上传使用 multipart。
+`write` 的 payload 为 JSON 对象。有 `id` 则更新，否则创建。`custom_fields` 会展开成 `custom_field_*` 表单字段。Story payload 无论创建还是更新，都必须包含非空 `category_id` 和 `label`；适配器会按实时 schema 验证并规范化枚举值，缺失、歧义或非法时拒绝 dry-run 和写入。Story `readback` 的 `--expect` 也必须同时包含这两个字段。Story / Task Description 原样提交，不做 Markdown 转换。普通写入 POST 使用 `application/x-www-form-urlencoded`；附件上传使用 multipart。
 
 Story workflow 必须带 `--workitem-type-id`。评论 `entry_type` 使用复数 `stories` / `tasks`；附件 `type` 使用单数 `story` / `task`。不要用另一种形态重试作为补偿写入。
 

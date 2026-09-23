@@ -7,6 +7,7 @@
 1. 用户默认 workspace 命中；用户临时 workspace 覆盖；默认找不到；名称歧义。
 2. Story 正常创建、完全重复、相似候选、快速占位不强制等级、项目明确要求等级而缺失。
 3. 用户明确要求planned成功、其缺必填事实、create 后 Readback 不一致。
+4. Story 分类与标签：任一缺失、写为“未分类”、实时 schema 中不存在或多义时阻止 dry-run；有效显示值被唯一解析后，dry-run form 和 Readback expect 都含 `category_id`、`label`；回读遗漏分类时失败且停止后续写入。
 
 ## Story 写后 Product Task Necessity Check 回放
 
@@ -77,4 +78,4 @@ N6 必须区分两个历史时点：初次写入与回读不一致的失败时�
 2. 中途 Readback 失败后剩余动作不执行；不自动删除、覆盖或重试写入。
 
 ## 自动 contract 覆盖
-仓库测试应检查字段解析、枚举解析、完整与不完整查重、配置不等于查询、显式文件校验、root 越界阻止、mention HTML 转义、重复成员拒绝、Story 非法流转拒绝、Task workflow 回退、附件 dry-run 不 POST。脚本只核验确定性输入，不能证明平台真实成功或模型必然遵守协议。
+仓库测试应检查字段解析、枚举解析、Story 分类与标签必填和回读投影、完整与不完整查重、配置不等于查询、显式文件校验、root 越界阻止、mention HTML 转义、重复成员拒绝、Story 非法流转拒绝、Task workflow 回退、附件 dry-run 不 POST。脚本只核验确定性输入，不能证明平台真实成功或模型必然遵守协议。

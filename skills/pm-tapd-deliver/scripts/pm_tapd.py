@@ -346,6 +346,7 @@ def compact_item(item: dict[str, Any], entity: str) -> dict[str, Any]:
     else:
         compact["priority"] = stringify(item.get("priority") or item.get("priority_label"))
         compact["workitem_type_id"] = stringify(item.get("workitem_type_id"))
+        compact["category_id"] = stringify(item.get("category_id"))
         compact["label"] = stringify(item.get("label"))
     custom = {
         key: stringify(value)
@@ -355,6 +356,32 @@ def compact_item(item: dict[str, Any], entity: str) -> dict[str, Any]:
     if custom:
         compact["custom_fields"] = custom
     return compact
+
+
+def validate_story_required_fields(payload: dict[str, Any], request: RequestFn) -> None:
+    """Resolve required Story classification and label against the live schema."""
+    workspace_id = stringify(payload.get("workspace_id"))
+    if not workspace_id:
+        raise AdapterError("payload.workspace_id is required", 2)
+    schema = cmd_fields(
+        argparse.Namespace(entity="stories", workspace_id=workspace_id), request
+    )["fields"]
+    for api_name, logical_label in (("category_id", "分类"), ("label", "标签")):
+        value = stringify(payload.get(api_name)).strip()
+        if not value:
+            raise AdapterError(f"payload.{api_name} ({logical_label}) is required for stories", 2)
+        field = schema.get(api_name)
+        if not field or field.get("label") != logical_label:
+            raise AdapterError(f"Story {logical_label} field is unavailable in live schema", 1)
+        try:
+            resolved = contract.resolve_enum(field, value)
+        except ValueError as exc:
+            raise AdapterError(f"Story {logical_label} is missing or ambiguous in live schema", 1) from exc
+        if api_name == "category_id" and (
+            resolved == "-1" or stringify((field.get("options") or {}).get(resolved)) == "未分类"
+        ):
+            raise AdapterError("Story 分类 cannot be 未分类", 1)
+        payload[api_name] = resolved
 
 
 def flatten_payload(payload: dict[str, Any], field_schema: dict[str, dict[str, Any]] | None = None, entity: str = "") -> dict[str, str]:
@@ -783,12 +810,14 @@ def cmd_write(args: argparse.Namespace, request: RequestFn) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise AdapterError("payload must be a JSON object", 2)
     field_schema = {}
+    if args.entity == "stories":
+        validate_story_required_fields(payload, request)
     if args.entity == "tasks" and isinstance(payload.get("custom_fields"), dict):
         field_schema = cmd_fields(argparse.Namespace(entity="tasks", workspace_id=stringify(payload.get("workspace_id"))), request)["fields"]
     form = flatten_payload(payload, field_schema=field_schema, entity=args.entity)
-    # Preserve the latest task status unless the caller explicitly requested a
-    # transition. This protects against concurrent online edits, server-side
-    # defaults, or interface side effects during a partial field correction.
+    # TAPD may apply an implicit task status when updating only a custom field.
+    # Preserve the current status unless the caller explicitly requested a
+    # transition, so a field correction cannot silently complete a task.
     if args.entity == "tasks" and form.get("id") and "status" not in form:
         current = cmd_get(
             argparse.Namespace(entity="tasks", workspace_id=form.get("workspace_id", ""), id=form["id"]),
@@ -822,6 +851,14 @@ def cmd_readback(args: argparse.Namespace, request: RequestFn) -> dict[str, Any]
     expected = json.loads(args.expect) if args.expect else json.loads(Path(args.expect_file).read_text(encoding="utf-8"))
     if not isinstance(expected, dict):
         raise AdapterError("expect must be a JSON object", 2)
+    if args.entity == "stories":
+        missing = [key for key in ("category_id", "label") if not stringify(expected.get(key)).strip()]
+        if missing:
+            raise AdapterError(
+                "Story readback must assert category_id and label",
+                2,
+                extra={"missing": missing},
+            )
     got = cmd_get(args, request)["item"]
     mismatches = []
     for key, value in expected.items():
